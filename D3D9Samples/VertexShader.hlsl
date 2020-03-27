@@ -16,9 +16,10 @@ VS_OUTPUT main(VS_INPUT input)
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	output.position = mul(input.position, ViewProjMatrix);
 	output.diffuse = Blue;
-	return pos;
+	return output;
 }
 
+#if 0
 //标量
 bool	//布尔 true false
 int		//32位
@@ -57,3 +58,4 @@ float3x3 mat3x3;
 float4x4 mat4x4;
 float2x4 mat2x4;
 
+#endif;
