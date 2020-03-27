@@ -41,6 +41,7 @@ private:
 	LPDIRECT3DTEXTURE9 m_Texture_1x1;
 	LPDIRECT3DTEXTURE9 m_Texture_2x2;
 	LPDIRECT3DTEXTURE9 m_TextureHum;
+	LPD3DXCONSTANTTABLE m_ConstantTable;
 public:
 	SandBox(LPDIRECT3DDEVICE9 m_d3dDevice);
 	virtual HRESULT Init();
@@ -52,6 +53,8 @@ public:
 	void DrawIndexedUp();
 	void DrawIndexedUpTexture();
 	void DrawIndexedUpHumTexture();
+
+	void Shader();
 
 	virtual void SetUpMatrices();
 

@@ -312,6 +312,9 @@ void SandBox::DrawIndexedUpTexture()
 
 void SandBox::DrawIndexedUpHumTexture()
 {
+	//×ÅÉ«Æ÷
+	Shader();
+
 	SetUpMatrices();
 
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
@@ -369,6 +372,50 @@ void SandBox::DrawIndexedUpHumTexture()
 	m_d3dDevice->SetFVF(UV2Vertex::FVF);
 	short indexBuffer[6] = { 0,1,3,1,2,3 };
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(UV2Vertex));
+}
+
+
+
+void SandBox::Shader()
+{
+	D3DXHANDLE handle;
+	handle = m_ConstantTable->GetConstantByName(0, "ViewProjMatrix");
+
+	BOOL b = true;
+	m_ConstantTable->SetBool(m_d3dDevice, handle, b);
+
+	BOOL b1[3] = { true,true,true };
+	m_ConstantTable->SetBoolArray(m_d3dDevice, handle, b1, 3);
+
+	FLOAT f = 3.14f;
+	m_ConstantTable->SetFloat(m_d3dDevice, handle, f);
+
+	FLOAT f1[2] = { 3.14f,4.14f };
+	m_ConstantTable->SetFloatArray(m_d3dDevice, handle, f1,2);
+
+	INT i = 3;
+	m_ConstantTable->SetInt(m_d3dDevice, handle, i);
+
+	INT i1[3] = { 3,4,5 };
+	m_ConstantTable->SetIntArray(m_d3dDevice, handle, i1, 3);
+
+	D3DXMATRIX matrix;
+	m_ConstantTable->SetMatrix(m_d3dDevice, handle, &matrix);
+
+	D3DXMATRIX matrix1[4];
+	m_ConstantTable->SetMatrixArray(m_d3dDevice, handle, matrix1,4);
+
+	D3DXMATRIX* matrix2[4];
+	m_ConstantTable->SetMatrixPointerArray(m_d3dDevice, handle, matrix2, 4);
+
+	D3DXVECTOR4 v(1.0f,2.0f,3.0f,4.0f);
+	m_ConstantTable->SetVector(m_d3dDevice, handle, &v);
+
+	D3DXVECTOR4 v1[3];
+	m_ConstantTable->SetVectorArray(m_d3dDevice, handle, v1, 3);
+
+	D3DXMATRIX mm;
+	m_ConstantTable->SetValue(m_d3dDevice, handle, (void*)&mm,sizeof(mm));
 }
 
 void SandBox::SetUpMatrices()
