@@ -1,4 +1,8 @@
 #include "SandBox.h"
+#include<iostream>
+#include<fstream>
+using std::ofstream;
+using std::ios;
 
 SandBox::SandBox(LPDIRECT3DDEVICE9 p_d3dDevice)
 {
@@ -59,6 +63,15 @@ void SandBox::SetTexture()
 	if (D3DXCreateTextureFromFile(m_d3dDevice, L"bg.bmp", &m_Texture) != D3D_OK) {
 		MessageBox(NULL, L"纹理加载失败", L"小兔叽", MB_OK);
 	}
+
+	//FILE* fp;
+	//fopen_s(&fp, "bg.bmp", "r");
+	//fseek(fp, 0, SEEK_END);
+	//size_t size = ftell(fp);
+
+	//fseek(fp, 0, SEEK_END);
+	//D3DXCreateTextureFromFileInMemory(m_d3dDevice, fp, size, &m_Texture);
+	//fclose(fp);
 
 	//---------------------------------------------------------
 	if (D3DXCreateTextureFromFile(m_d3dDevice, L"bg1.bmp", &m_Texture1) != D3D_OK) {
@@ -133,35 +146,86 @@ void SandBox::SetHumTexture()
 {
 	//---------------------------------------------------------
 	//人物纹理
-	if (D3DXCreateTextureFromFile(m_d3dDevice, L"h1.bmp", &m_TextureHum) != D3D_OK) {
+	if (D3DXCreateTextureFromFile(m_d3dDevice, L"h2.bmp", &m_TextureHum) != D3D_OK) {
 		MessageBox(NULL, L"纹理加载失败", L"小兔叽", MB_OK);
 	}
 
 	D3DSURFACE_DESC hum;
 	m_TextureHum->GetLevelDesc(0, &hum);
 
-	D3DLOCKED_RECT lockHum;
-	m_TextureHum->LockRect(0, &lockHum, 0, 0);
+	//D3DLOCKED_RECT lockHum;
+	//m_TextureHum->LockRect(0, &lockHum, 0, 0);
 
-	DWORD* Data = (DWORD*)lockHum.pBits;
+	//DWORD* Data = (DWORD*)lockHum.pBits;
+
+	////赋值
+	//for (UINT h = 0; h < hum.Height; h++)
+	//{
+	//	for (UINT w = 0; w < hum.Width; w++)
+	//	{
+	//		UINT index = h * lockHum.Pitch / 4 + w;
+	//		DWORD color = Data[index];
+	//		D3DCOLORVALUE* cl = (D3DCOLORVALUE*)&color;
+	//		if (cl->r != 0) {
+	//			int i = 0;
+	//		}
+	//		if (color == 0x00000000)
+	//		{
+	//			Data[index] = D3DCOLOR_ARGB(0, 0xff, 0xff, 0xff);
+	//		}
+	//		//Data[index] = D3DCOLOR_ARGB(0xff, cl->rgbRed, cl->rgbGreen, cl->rgbBlue);
+	//	}
+	//}
+
+	//m_TextureHum->UnlockRect(0);
+
+
+	//创建一个新的纹理
+	m_d3dDevice->CreateTexture(hum.Width, hum.Height, 0, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_Hum, NULL);
+
+	IDirect3DSurface9* m_srcSurface;
+	IDirect3DSurface9* m_dstSurface;
+	m_TextureHum->GetSurfaceLevel(0, &m_srcSurface);
+	m_Hum->GetSurfaceLevel(0, &m_dstSurface);
+
+	D3DXLoadSurfaceFromSurface(
+		m_dstSurface,
+		NULL, NULL,
+		m_srcSurface,
+		NULL, NULL,
+		D3DX_FILTER_LINEAR,
+		D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff)
+	);
+
+	//处理
+	D3DSURFACE_DESC hum2;
+	m_Hum->GetLevelDesc(0, &hum2);
+
+	D3DLOCKED_RECT lockHum2;
+	m_Hum->LockRect(0, &lockHum2, 0, 0);
+
+	DWORD* Data2 = (DWORD*)lockHum2.pBits;
 
 	//赋值
-	for (UINT h = 0; h < hum.Height; h++)
+	for (UINT h = 0; h < hum2.Height; h++)
 	{
-		for (UINT w = 0; w < hum.Width; w++)
+		for (UINT w = 0; w < hum2.Width; w++)
 		{
-			UINT index = h * lockHum.Pitch / 4 + w;
-			DWORD color = Data[index];
-			RGBQUAD* cl = (RGBQUAD*)&color;
-			if (color == 0x00000000)
-			{
-				Data[index] = D3DCOLOR_ARGB(0,0,0,0);
+			UINT index = h * lockHum2.Pitch / 4 + w;
+			RGBQUAD* cl = (RGBQUAD*)&Data2[index];
+			if (cl->rgbRed != 0) {
+				int i = 0;
 			}
+			if (cl->rgbRed == 0 && cl->rgbGreen == 0 && cl->rgbBlue == 0)
+			{
+				Data2[index] = D3DCOLOR_ARGB(0x0, 0xff, 0, 0);
+			}
+			//Data2[index] = D3DCOLOR_ARGB(0x55, cl->rgbRed, cl->rgbGreen, cl->rgbBlue);
 			//Data[index] = D3DCOLOR_ARGB(0xff, cl->rgbRed, cl->rgbGreen, cl->rgbBlue);
 		}
 	}
 
-	m_TextureHum->UnlockRect(0);
+	m_Hum->UnlockRect(0);
 }
 
 void SandBox::Draw()
@@ -309,7 +373,6 @@ void SandBox::DrawIndexedUpTexture()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(UV2Vertex));
 }
 
-
 void SandBox::DrawIndexedUpHumTexture()
 {
 	//着色器
@@ -374,48 +437,110 @@ void SandBox::DrawIndexedUpHumTexture()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(UV2Vertex));
 }
 
-
-
 void SandBox::Shader()
 {
-	D3DXHANDLE handle;
-	handle = m_ConstantTable->GetConstantByName(0, "ViewProjMatrix");
+	//创建着色器
+	LPD3DXBUFFER shader = 0;
+	LPD3DXBUFFER errorBuffer = 0;
 
-	BOOL b = true;
-	m_ConstantTable->SetBool(m_d3dDevice, handle, b);
+	HRESULT hr = D3DXCompileShaderFromFile(L"PixelShader.hlsl", 0, 0, "main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mConstantTable);
+	if (errorBuffer)
+	{
+		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
+		errorBuffer->Release();
+	}
 
-	BOOL b1[3] = { true,true,true };
-	m_ConstantTable->SetBoolArray(m_d3dDevice, handle, b1, 3);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
+		return;
+	}
 
-	FLOAT f = 3.14f;
-	m_ConstantTable->SetFloat(m_d3dDevice, handle, f);
 
-	FLOAT f1[2] = { 3.14f,4.14f };
-	m_ConstantTable->SetFloatArray(m_d3dDevice, handle, f1,2);
+	hr = m_d3dDevice->CreatePixelShader((DWORD*)shader->GetBufferPointer(), &mPixelShader);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"CreatePixelShader - failed", 0, 0);
+		return;
+	}
 
-	INT i = 3;
-	m_ConstantTable->SetInt(m_d3dDevice, handle, i);
+	shader->Release();
 
-	INT i1[3] = { 3,4,5 };
-	m_ConstantTable->SetIntArray(m_d3dDevice, handle, i1, 3);
+	//hATex = mConstantTable->GetConstantByName(0, "ATex");
+	//hBTex = mConstantTable->GetConstantByName(0, "BTex");
+	//UINT count;
+	//mConstantTable->GetConstantDesc(hATex, &ATex, &count);
+	//mConstantTable->GetConstantDesc(hBTex, &BTex, &count);
 
-	D3DXMATRIX matrix;
-	m_ConstantTable->SetMatrix(m_d3dDevice, handle, &matrix);
+	//mConstantTable->SetDefaults(m_d3dDevice);
 
-	D3DXMATRIX matrix1[4];
-	m_ConstantTable->SetMatrixArray(m_d3dDevice, handle, matrix1,4);
+}
 
-	D3DXMATRIX* matrix2[4];
-	m_ConstantTable->SetMatrixPointerArray(m_d3dDevice, handle, matrix2, 4);
+void SandBox::DrawIndexedUpHumTextureShader()
+{
+	//SetUpMatrices();
 
-	D3DXVECTOR4 v(1.0f,2.0f,3.0f,4.0f);
-	m_ConstantTable->SetVector(m_d3dDevice, handle, &v);
+	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-	D3DXVECTOR4 v1[3];
-	m_ConstantTable->SetVectorArray(m_d3dDevice, handle, v1, 3);
+	//绘制前要开启融合运算
+	//m_d3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	//设定融合因子，采用默认值
+	//m_d3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//m_d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	D3DXMATRIX mm;
-	m_ConstantTable->SetValue(m_d3dDevice, handle, (void*)&mm,sizeof(mm));
+	//创建顶点缓存
+	float max = 1.0f, min = 0.0f;
+	//float x = 1.0f, y = 0.8f;
+	//UVVertex vertex[] = {
+	//	{ -x, -y, 1.0f ,0x00ffffff,min ,max,min ,max}, // x, y, z, rhw, color
+	//	{ -x, y	, 1.0f ,0xffffffff,min ,min,min ,min},
+	//	{ x	, y	, 1.0f ,0xffffffff,max ,min,max ,min},
+	//	{ x	, -y, 1.0f ,0xffffffff,max ,max,max ,max},
+	//};
+
+	float x = 0.0f, y = 0.0f,w = 800.0f,h = 600.0f;
+	RHWVertex vertex[] = {
+	{ x	   , y + h	, 1.0f ,1.0f ,0x00ffffff,min ,max,min ,max}, // x, y, z, rhw, color
+	{ x	   , y		, 1.0f ,1.0f ,0xffffffff,min ,min,min ,min},
+	{ x + w, y		, 1.0f ,1.0f ,0xffffffff,max ,min,max ,min},
+	{ x + w, y + h	, 1.0f ,1.0f ,0xffffffff,max ,max,max ,max},
+	};
+
+	//使用像素着色器
+	m_d3dDevice->SetPixelShader(mPixelShader);
+
+	//使用纹理
+	m_d3dDevice->SetTexture(0, m_Texture);
+	m_d3dDevice->SetTexture(1, m_Texture_2x2);
+
+	m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_d3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+
+	//绘制顶点缓存
+	m_d3dDevice->SetFVF(RHWVertex::FVF);
+	short indexBuffer[6] = { 0,1,3,1,2,3 };
+	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(RHWVertex));
+}
+
+
+
+void SandBox::RunCSO()
+{
+	std::ifstream fp;
+
+	fp.open("PixelShader.cso", ios::in | ios::binary);
+
+	HRESULT hr = m_d3dDevice->CreatePixelShader((DWORD*)&fp, &mPixelShader);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"CreatePixelShader - failed", 0, 0);
+		return;
+	}
+
+	//使用像素着色器
+	m_d3dDevice->SetPixelShader(mPixelShader);
+	
 }
 
 void SandBox::SetUpMatrices()

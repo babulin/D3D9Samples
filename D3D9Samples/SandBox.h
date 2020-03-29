@@ -27,6 +27,15 @@ struct UV2Vertex
 	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX3;
 };
 
+struct RHWVertex
+{
+	float x, y, z, rhw;
+	DWORD color;
+	float u, v;
+	float u1, v1;
+	static const DWORD FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2;
+};
+
 class SandBox {
 public:
 	float mWidth;
@@ -41,7 +50,14 @@ private:
 	LPDIRECT3DTEXTURE9 m_Texture_1x1;
 	LPDIRECT3DTEXTURE9 m_Texture_2x2;
 	LPDIRECT3DTEXTURE9 m_TextureHum;
-	LPD3DXCONSTANTTABLE m_ConstantTable;
+	LPDIRECT3DTEXTURE9 m_Hum;
+
+	D3DXHANDLE hATex;
+	D3DXHANDLE hBTex;
+	D3DXCONSTANT_DESC ATex;
+	D3DXCONSTANT_DESC BTex;
+	LPD3DXCONSTANTTABLE mConstantTable;
+	LPDIRECT3DPIXELSHADER9 mPixelShader;
 public:
 	SandBox(LPDIRECT3DDEVICE9 m_d3dDevice);
 	virtual HRESULT Init();
@@ -53,8 +69,10 @@ public:
 	void DrawIndexedUp();
 	void DrawIndexedUpTexture();
 	void DrawIndexedUpHumTexture();
+	void DrawIndexedUpHumTextureShader();
 
 	void Shader();
+	void RunCSO();
 
 	virtual void SetUpMatrices();
 
