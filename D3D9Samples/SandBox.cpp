@@ -509,8 +509,12 @@ void SandBox::DrawIndexedUpHumTextureShader()
 	};
 
 	//使用像素着色器
-	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+	float color[4] = { 0.0f,0.0f,1.0f,1.0f };
 	m_d3dDevice->SetPixelShaderConstantF(0, color, 4);
+
+	float color1[4] = { 0.0f,1.0f,1.0f,1.0f };
+	m_d3dDevice->SetPixelShaderConstantF(sizeof(float) * 4, color1, 4);
+
 	m_d3dDevice->SetPixelShader(mPixelShader);
 
 	//使用纹理
