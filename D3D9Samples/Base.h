@@ -8,3 +8,10 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")//d3d¡¥Ω”ø‚
 #pragma comment(lib,"winmm.lib") //timeGetTime()
+
+struct MYCOLOR
+{
+	LONG R;
+	LONG G;
+	LONG B;
+};

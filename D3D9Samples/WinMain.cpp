@@ -2,11 +2,13 @@
 #include "D3D9.h"
 #include "SandBox.h"
 #include "resource.h"
+#include <CommCtrl.h>
 
 GameWind* g_wnd;
 D3D9* g_d3d9;
 SandBox* g_sandBox;
 //GameApp* gameApp;//游戏对象
+static MYCOLOR color = { 0,0,0 };
 
 LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -32,6 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_sandBox->SetTexture();
 	g_sandBox->SetHumTexture();
 	g_sandBox->Shader();
+	g_sandBox->SetTexture2X2();
 
 	//对话框
 	HWND hAbout = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)About);
@@ -66,24 +69,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static HWND hWndSlider1 = nullptr;
+	static HWND hWndSlider2 = nullptr;
+	static HWND hWndSlider3 = nullptr;
+
 	switch (message)
 	{
-	case WM_INITDIALOG:
-		return TRUE;
-	case WM_COMMAND:
-	{
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
+		case WM_INITDIALOG:{
+			hWndSlider1 = GetDlgItem(hDlg, IDC_SLIDER1); //m_hWnd为父窗口的句柄
+			SendMessageW(hWndSlider1, TBM_SETRANGE, TRUE, (LPARAM)MAKELONG(0, 255));//设置0-255
+
+			hWndSlider2 = GetDlgItem(hDlg, IDC_SLIDER2); //m_hWnd为父窗口的句柄
+			SendMessageW(hWndSlider2, TBM_SETRANGE, TRUE, (LPARAM)MAKELONG(0, 255));//设置0-255
+
+			hWndSlider3 = GetDlgItem(hDlg, IDC_SLIDER3); //m_hWnd为父窗口的句柄
+			SendMessageW(hWndSlider3, TBM_SETRANGE, TRUE, (LPARAM)MAKELONG(0, 255));//设置0-255
 			return TRUE;
 		}
-	}
-	break;
-	case WM_CLOSE:
-	{
-		PostQuitMessage(1);
-		return TRUE;
-	}
+		case WM_COMMAND:
+		{
+			if (LOWORD(wParam) == IDC_BUTTON1)
+			{
+				OutputDebugString(L"按钮事件");
+				return TRUE;
+			}
+			break;
+		}
+		case WM_HSCROLL:
+		{
+			color.R = (LONG)SendMessageW(hWndSlider1, TBM_GETPOS, 0, 0); //value即是当前控件的值
+			color.G = (LONG)SendMessageW(hWndSlider2, TBM_GETPOS, 0, 0); //value即是当前控件的值
+			color.B = (LONG)SendMessageW(hWndSlider3, TBM_GETPOS, 0, 0); //value即是当前控件的值
+
+			wchar_t buf[50] = {};
+			swprintf_s(buf, L"R:%d,G:%d,B:%d\n", color.R, color.G, color.B);
+			OutputDebugString(buf);
+			break;
+		}
+		case WM_CLOSE:
+		{
+			PostQuitMessage(1);
+			return TRUE;
+		}
 	}
 	return FALSE;
 }

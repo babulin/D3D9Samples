@@ -1,11 +1,15 @@
-sampler ATex;
-sampler BTex;
 
+//纹理对应 顺序
+sampler ATex;//0 纹理
+sampler BTex;//1 纹理
+float4 color;
+//输入纹理坐标(所有)
 struct PS_INPUT {
 	float2 t0 : TEXCOORD0;
 	float2 t1 : TEXCOORD1;
 };
 
+//运算后输出
 struct PS_OUTPUT {
 	vector diffuse : COLOR0;
 };
@@ -19,7 +23,7 @@ PS_OUTPUT main(PS_INPUT input)
 
 	//b = vector(1.0f, 1.0f, 1.0f, 0);
 
-	vector c = a * b;
+	vector c = (a) * b * color;
 	output.diffuse = c;
 
 	//output.diffuse = vector(1.0f,1.0f,1.0f,1.0f);

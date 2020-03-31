@@ -64,6 +64,7 @@ public:
 	virtual HRESULT SetIndices();
 	void SetTexture();
 	void SetHumTexture();
+	void SetTexture2X2();
 	virtual void Draw();
 	void DrawUp();
 	void DrawIndexedUp();

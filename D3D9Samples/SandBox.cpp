@@ -107,7 +107,9 @@ void SandBox::SetTexture()
 	}
 
 	m_Texture_1x1->UnlockRect(0);
+}
 
+void SandBox::SetTexture2X2() {
 	//---------------------------------------------------------
 	//纹理2X2
 	if (FAILED(m_d3dDevice->CreateTexture(2, 2, 0, D3DUSAGE_DYNAMIC, D3DFMT_A32B32G32R32F, D3DPOOL_DEFAULT, &m_Texture_2x2, nullptr))) {
@@ -134,12 +136,11 @@ void SandBox::SetTexture()
 		for (UINT w = 0; w < desc1.Width; w++)
 		{
 			UINT index = h * lockRect1.Pitch / 16 + w;
-			Data1[index] = COLOR[h*2+w];
+			Data1[index] = COLOR[h * 2 + w];
 		}
 	}
 
 	m_Texture_2x2->UnlockRect(0);
-
 }
 
 void SandBox::SetHumTexture()
@@ -498,20 +499,22 @@ void SandBox::DrawIndexedUpHumTextureShader()
 	//	{ x	, y	, 1.0f ,0xffffffff,max ,min,max ,min},
 	//	{ x	, -y, 1.0f ,0xffffffff,max ,max,max ,max},
 	//};
-
+	float max1 = 0.75f, min1 = 0.25f;
 	float x = 0.0f, y = 0.0f,w = 800.0f,h = 600.0f;
 	RHWVertex vertex[] = {
-	{ x	   , y + h	, 1.0f ,1.0f ,0x00ffffff,min ,max,min ,max}, // x, y, z, rhw, color
-	{ x	   , y		, 1.0f ,1.0f ,0xffffffff,min ,min,min ,min},
-	{ x + w, y		, 1.0f ,1.0f ,0xffffffff,max ,min,max ,min},
-	{ x + w, y + h	, 1.0f ,1.0f ,0xffffffff,max ,max,max ,max},
+	{ x	   , y + h	, 1.0f ,1.0f ,0x00ffffff,min ,max,min1 ,max1}, // x, y, z, rhw, color
+	{ x	   , y		, 1.0f ,1.0f ,0xffffffff,min ,min,min1 ,min1},
+	{ x + w, y		, 1.0f ,1.0f ,0xffffffff,max ,min,max1 ,min1},
+	{ x + w, y + h	, 1.0f ,1.0f ,0xffffffff,max ,max,max1 ,max1},
 	};
 
 	//使用像素着色器
+	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+	m_d3dDevice->SetPixelShaderConstantF(0, color, 4);
 	m_d3dDevice->SetPixelShader(mPixelShader);
 
 	//使用纹理
-	m_d3dDevice->SetTexture(0, m_Texture);
+	m_d3dDevice->SetTexture(0, m_Texture_1x1);
 	m_d3dDevice->SetTexture(1, m_Texture_2x2);
 
 	m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
