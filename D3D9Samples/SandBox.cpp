@@ -377,7 +377,7 @@ void SandBox::DrawIndexedUpTexture()
 void SandBox::DrawIndexedUpHumTexture()
 {
 	//着色器
-	Shader();
+	//Shader();
 
 	SetUpMatrices();
 
@@ -438,13 +438,65 @@ void SandBox::DrawIndexedUpHumTexture()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(UV2Vertex));
 }
 
-void SandBox::Shader()
+void SandBox::VSShader()
+{
+	//创建着色器
+	LPD3DXBUFFER pShader = NULL;
+
+	LPD3DXBUFFER errorBuffer = 0;
+
+	HRESULT hr = D3DXCompileShaderFromFile(L"VertexShader.hlsl", 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSConstTable);
+	if (errorBuffer)
+	{
+		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
+		errorBuffer->Release();
+	}
+
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
+		return;
+	}
+
+	//获取常量
+	D3DXHANDLE hWorldViewProjMatrix;
+	hWorldViewProjMatrix = mVSConstTable->GetConstantByName(NULL,"WorldViewProjMatrix");
+	if (hWorldViewProjMatrix == NULL)
+	{
+		MessageBox(NULL, L"获取常量 - failed", 0, 0);
+		return;
+	}
+
+	//获取常量设置
+	D3DXHANDLE hBGCOLOR = mVSConstTable->GetConstantByName(NULL,"BGCOLOR");
+	D3DXHANDLE bgColor = mVSConstTable->GetConstantByName(hBGCOLOR,"Color");
+	float fColor[4] = { 1.0f,0.0f,0.0f,1.0f };
+	mVSConstTable->SetFloatArray(m_d3dDevice, bgColor, fColor, 4);
+
+
+	//按索引获取句柄
+	//pConstTable->GetConstant(NULL, 0);
+	//pConstTable->GetConstantElement(NULL, 0);
+
+
+	hr = m_d3dDevice->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &mVertexShader);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"CreateVertexShader - failed", 0, 0);
+		return;
+	}
+
+	pShader->Release();
+}
+
+//像素着色器
+void SandBox::PSShader()
 {
 	//创建着色器
 	LPD3DXBUFFER shader = 0;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(L"PixelShader.hlsl", 0, 0, "main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mConstantTable);
+	HRESULT hr = D3DXCompileShaderFromFile(L"PixelShader.hlsl", 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
 	if (errorBuffer)
 	{
 		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
@@ -466,29 +518,28 @@ void SandBox::Shader()
 	}
 
 	shader->Release();
-
-	//hATex = mConstantTable->GetConstantByName(0, "ATex");
-	//hBTex = mConstantTable->GetConstantByName(0, "BTex");
-	//UINT count;
-	//mConstantTable->GetConstantDesc(hATex, &ATex, &count);
-	//mConstantTable->GetConstantDesc(hBTex, &BTex, &count);
-
-	//mConstantTable->SetDefaults(m_d3dDevice);
-
 }
 
 void SandBox::DrawIndexedUpHumTextureShader()
 {
 	//SetUpMatrices();
 
-	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
-	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	
 
-	//绘制前要开启融合运算
-	//m_d3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-	//设定融合因子，采用默认值
-	//m_d3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	//m_d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//设置HLSL矩阵
+	D3DXMATRIX matWorld, matView, matProj;
+	m_d3dDevice->GetTransform(D3DTS_VIEW, &matView);//取景变换矩阵
+	m_d3dDevice->GetTransform(D3DTS_PROJECTION, &matProj);//投影变换矩阵
+	//D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f);
+
+	D3DXMATRIX matWorldViewProj = matWorld * matView * matProj;
+	mVSConstTable->SetMatrix(m_d3dDevice, "WorldViewProjMatrix", &matWorldViewProj);
+
+	//设置顶点着色器
+	m_d3dDevice->SetVertexShader(mVertexShader);
+
+	//m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	//创建顶点缓存
 	float max = 1.0f, min = 0.0f;
@@ -500,7 +551,7 @@ void SandBox::DrawIndexedUpHumTextureShader()
 	//	{ x	, -y, 1.0f ,0xffffffff,max ,max,max ,max},
 	//};
 	float max1 = 0.75f, min1 = 0.25f;
-	float x = 0.0f, y = 0.0f,w = 800.0f,h = 600.0f;
+	float x = 250.0f, y = 150.0f,w = 300.0f,h = 300.0f;
 	RHWVertex vertex[] = {
 	{ x	   , y + h	, 1.0f ,1.0f ,0x00ffffff,min ,max,min1 ,max1}, // x, y, z, rhw, color
 	{ x	   , y		, 1.0f ,1.0f ,0xffffffff,min ,min,min1 ,min1},
@@ -509,20 +560,20 @@ void SandBox::DrawIndexedUpHumTextureShader()
 	};
 
 	//使用像素着色器
-	float color[4] = { 0.0f,0.0f,1.0f,1.0f };
-	m_d3dDevice->SetPixelShaderConstantF(0, color, 4);
+	//float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+	//m_d3dDevice->SetPixelShaderConstantF(0, color, 4);
 
-	float color1[4] = { 0.0f,1.0f,1.0f,1.0f };
-	m_d3dDevice->SetPixelShaderConstantF(sizeof(float) * 4, color1, 4);
+	//float color1[4] = { 0.0f,0.0f,1.0f,1.0f };
+	//m_d3dDevice->SetPixelShaderConstantF(4, color1, 4);
 
-	m_d3dDevice->SetPixelShader(mPixelShader);
+	//m_d3dDevice->SetPixelShader(mPixelShader);
 
 	//使用纹理
-	m_d3dDevice->SetTexture(0, m_Texture_1x1);
-	m_d3dDevice->SetTexture(1, m_Texture_2x2);
+	//m_d3dDevice->SetTexture(0, m_Texture_1x1);
+	//m_d3dDevice->SetTexture(1, m_Texture_2x2);
 
-	m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	m_d3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//m_d3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 
 	//绘制顶点缓存
 	m_d3dDevice->SetFVF(RHWVertex::FVF);

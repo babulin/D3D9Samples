@@ -33,13 +33,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_sandBox->SetIndices();
 	g_sandBox->SetTexture();
 	g_sandBox->SetHumTexture();
-	g_sandBox->Shader();
+	g_sandBox->VSShader();
+	g_sandBox->PSShader();
 	g_sandBox->SetTexture2X2();
 
 	//对话框
-	HWND hAbout = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)About);
-	ShowWindow(hAbout, SW_SHOW);
-	UpdateWindow(hAbout);
+	//HWND hAbout = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)About);
+	//ShowWindow(hAbout, SW_SHOW);
+	//UpdateWindow(hAbout);
 
 	//游戏循环
 	while (g_wnd->ProcessMessage()) {

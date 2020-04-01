@@ -40,10 +40,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="VertexShader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
+    <FxCompile Include="PixelShader_dl.hlsl">
+      <Filter>资源文件</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
   </ItemGroup>

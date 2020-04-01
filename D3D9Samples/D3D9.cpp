@@ -56,6 +56,15 @@ HRESULT D3D9::InitD3D()
 		vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 	}
 
+	//检测shader版本
+	if (caps.VertexShaderVersion < D3DVS_VERSION(3,0)) {
+		MessageBox(mHwnd, L"不支持3.0顶点着色器",L"提示",NULL);
+	}
+
+	if (caps.PixelShaderVersion < D3DPS_VERSION(3, 0)) {
+		MessageBox(mHwnd, L"不支持3.0像素着色器", L"提示", NULL);
+	}
+
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
