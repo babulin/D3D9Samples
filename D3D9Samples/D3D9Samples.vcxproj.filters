@@ -43,10 +43,10 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader_dl.hlsl">
+    <FxCompile Include="PixelShader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="PixelShader_01.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
   </ItemGroup>

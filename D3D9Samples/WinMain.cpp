@@ -35,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_sandBox->SetHumTexture();
 	g_sandBox->VSShader();
 	g_sandBox->PSShader();
+	//g_sandBox->PSShader01();
 	g_sandBox->SetTexture2X2();
 
 	//¶Ô»°¿ò
@@ -51,8 +52,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//g_sandBox->DrawIndexedUp();
 		//g_sandBox->DrawIndexedUpTexture();
 		//g_sandBox->DrawIndexedUpHumTexture();
-		g_sandBox->DrawIndexedUpHumTextureShader();
-
+		//g_sandBox->DrawIndexedUpHumTextureShader();
+		g_sandBox->DrawVSShader();
 		g_d3d9->EndScene();
 	}
 

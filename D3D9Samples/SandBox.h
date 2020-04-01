@@ -36,6 +36,15 @@ struct RHWVertex
 	static const DWORD FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2;
 };
 
+//可编程顶点结构
+struct VSVertex {
+	float x, y, z;//顶点位置
+	float nx, ny, nz;//顶点法向量
+	VSVertex(float x,float y,float z, float nx, float ny, float nz)
+		:x(x),y(y),z(z),nx(nx),ny(ny),nz(nz){}
+	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
+};
+
 class SandBox {
 public:
 	float mWidth;
@@ -56,6 +65,9 @@ private:
 	LPD3DXCONSTANTTABLE mPSConstTable = NULL;
 	LPDIRECT3DVERTEXSHADER9 mVertexShader;//顶点着色器接口
 	LPDIRECT3DPIXELSHADER9 mPixelShader;//像素着色器接口
+
+	LPDIRECT3DVERTEXDECLARATION9 pVertexDecl = NULL;
+	LPD3DXMESH pMeshTeapot = NULL;
 public:
 	SandBox(LPDIRECT3DDEVICE9 m_d3dDevice);
 	virtual HRESULT Init();
@@ -69,9 +81,11 @@ public:
 	void DrawIndexedUpTexture();
 	void DrawIndexedUpHumTexture();
 	void DrawIndexedUpHumTextureShader();
+	void DrawVSShader();
 
 	void VSShader();
 	void PSShader();
+	void PSShader01();
 	void RunCSO();
 
 	virtual void SetUpMatrices();
