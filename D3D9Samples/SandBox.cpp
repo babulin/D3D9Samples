@@ -446,7 +446,6 @@ void SandBox::VSShader()
 	//---------------------------------------------------
 	//创建着色器
 	LPD3DXBUFFER pShader = NULL;
-
 	LPD3DXBUFFER errorBuffer = 0;
 
 	HRESULT hr = D3DXCompileShaderFromFile(L"VertexShader.hlsl", 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSConstTable);
@@ -622,6 +621,7 @@ void SandBox::DrawVSShader()
 {
 	//设置光照
 	D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
+	//D3DXVECTOR4 vLightDir(0.0f, 0.0f, 0.0f, 1.0f);
 	mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
 
 	//设置单位世界矩阵
@@ -652,14 +652,14 @@ void SandBox::DrawVSShader()
 
 	//绘制立方体
 	VSVertex vertex[] = {
-		{ -1.0f,1.0f ,-1.0f,0.0f,0.0f,-1.0f}, // x, y, z, nx,ny,nz
-		{ 1.0f ,1.0f ,-1.0f,0.0f,0.0f,-1.0f},
-		{ 1.0f ,-1.0f,-1.0f,0.0f,0.0f,-1.0f},
-		{ -1.0f,-1.0f,-1.0f,0.0f,0.0f,-1.0f},
-		{ -1.0f,1.0f ,1.0f,0.0f,0.0f,-1.0f}, 
-		{ 1.0f ,1.0f ,1.0f,0.0f,0.0f,-1.0f},
-		{ 1.0f ,-1.0f,1.0f,0.0f,0.0f,-1.0f},
-		{ -1.0f,-1.0f,1.0f,0.0f,0.0f,-1.0f},
+		{ -1.0f,1.0f ,-1.0f,0.0f,0.0f,1.0f}, // x, y, z, nx,ny,nz
+		{ 1.0f ,1.0f ,-1.0f,0.0f,0.0f,1.0f},
+		{ 1.0f ,-1.0f,-1.0f,0.0f,0.0f,1.0f},
+		{ -1.0f,-1.0f,-1.0f,0.0f,0.0f,1.0f},
+		{ -1.0f,1.0f ,1.0f,0.0f,0.0f,1.0f}, 
+		{ 1.0f ,1.0f ,1.0f,0.0f,0.0f,1.0f},
+		{ 1.0f ,-1.0f,1.0f,0.0f,0.0f,1.0f},
+		{ -1.0f,-1.0f,1.0f,0.0f,0.0f,1.0f},
 	};
 
 	//设置顶点着色器
@@ -671,7 +671,6 @@ void SandBox::DrawVSShader()
 	//m_d3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
 	//绘制顶点缓存
-	m_d3dDevice->SetFVF(VSVertex::FVF);
 	short indexBuffer[] = { 
 		0,1,2,0,2,3,	//里面
 		0,4,7,0,7,3,	//左边
