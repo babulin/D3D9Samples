@@ -40,6 +40,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	//初始化渲染box
 	g_sBox = new ShaderBox(g_d3d9->m_d3dDevice, g_wnd->mWidth, g_wnd->mHeight);
+	
+	//加载着色器
+	LPDIRECT3DVERTEXSHADER9 mVShader = NULL;
+	LPD3DXCONSTANTTABLE mVSCTable = NULL;
+	wchar_t file[] = TEXT("VSxyz.hlsl");
+	g_sBox->LoadVS(file, mVShader, mVSCTable);
+
+	//着色器
 	g_sBox->VSShader();
 
 	//对话框

@@ -16,6 +16,7 @@ private:
 	LPDIRECT3DVERTEXDECLARATION9 pVertexDecl;	//∂•µ„√Ë ˆ
 public:
 	ShaderBox(LPDIRECT3DDEVICE9 d3dDevice,int width,int height);
+	void LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader,LPD3DXCONSTANTTABLE &mVSCTable);
 	void VSShader();
 	void PSShader();
 	void DrawXYZ();

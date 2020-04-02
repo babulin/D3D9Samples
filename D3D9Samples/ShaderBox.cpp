@@ -7,6 +7,36 @@ ShaderBox::ShaderBox(LPDIRECT3DDEVICE9 d3dDevice,int width,int height)
 	mHeight = static_cast<float>(height);
 }
 
+void ShaderBox::LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader, LPD3DXCONSTANTTABLE &mVSCTable)
+{
+	//---------------------------------------------------
+//创建着色器
+	LPD3DXBUFFER pShader = NULL;
+	LPD3DXBUFFER errorBuffer = 0;
+
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
+	if (errorBuffer)
+	{
+		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
+		errorBuffer->Release();
+	}
+
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
+		return;
+	}
+
+	hr = m_d3dDevice->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &mVShader);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, L"CreateVertexShader - failed", 0, 0);
+		return;
+	}
+
+	pShader->Release();
+}
+
 void ShaderBox::VSShader()
 {
 	//---------------------------------------------------
@@ -110,7 +140,6 @@ void ShaderBox::PSShader()
 
 void ShaderBox::DrawXYZ()
 {
-
 	//绘制立方体
 	D3Vertex vertex[] = {
 		{-10.0f, 0.0f, 0.0f,0x00ff0000},//X - R
@@ -119,14 +148,13 @@ void ShaderBox::DrawXYZ()
 		{ 0.0f,-10.0 , 0.0f,0x0000ff00},	//Y - G
 		{ 0.0f, 0.0f,-10.0f,0x000000ff},	//Z - B
 		{ 0.0f, 0.0f, 10.0f,0x000000ff},	//Z - B
+		{ 0.0f, 0.0f,  0.0f,0xffffffff},	//LIGHT - B
+		{ 1.0f, 1.0f, -10.0f,0xffffffff},	//LIGHT - B
 	};
-
-	//使用像素着色器
-	//m_d3dDevice->SetPixelShader(mPixelShader);
 
 	//m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	//m_d3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	//m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	m_d3dDevice->SetFVF(D3Vertex::FVF);
 	//绘制顶点缓存
@@ -134,8 +162,9 @@ void ShaderBox::DrawXYZ()
 		0,1,//X
 		2,3,//Y
 		4,5,//Z	
+		6,7,//LIGHT
 	};
-	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, 6, 3, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(D3Vertex));
+	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, ARRAYSIZE(indexBuffer), ARRAYSIZE(indexBuffer)/2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(D3Vertex));
 }
 
 void ShaderBox::DrawVSShader()
