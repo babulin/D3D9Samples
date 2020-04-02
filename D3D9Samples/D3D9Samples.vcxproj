@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="D3D9.cpp" />
+    <ClCompile Include="ShaderBox.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@
     <ClInclude Include="SandBox.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="D3D9.h" />
+    <ClInclude Include="ShaderBox.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

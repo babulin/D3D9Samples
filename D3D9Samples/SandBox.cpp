@@ -438,111 +438,6 @@ void SandBox::DrawIndexedUpHumTexture()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(UV2Vertex));
 }
 
-void SandBox::VSShader()
-{
-	//创建茶壶
-	//D3DXCreateTeapot(m_d3dDevice, &pMeshTeapot, 0);
-
-	//---------------------------------------------------
-	//创建着色器
-	LPD3DXBUFFER pShader = NULL;
-	LPD3DXBUFFER errorBuffer = 0;
-
-	HRESULT hr = D3DXCompileShaderFromFile(L"VertexShader.hlsl", 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSConstTable);
-	if (errorBuffer)
-	{
-		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
-		errorBuffer->Release();
-	}
-
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
-		return;
-	}
-
-	//获取常量
-	//D3DXHANDLE hWorldViewProjMatrix;
-	//hWorldViewProjMatrix = mVSConstTable->GetConstantByName(NULL,"WorldViewProjMatrix");
-	//if (hWorldViewProjMatrix == NULL)
-	//{
-	//	MessageBox(NULL, L"获取常量 - failed", 0, 0);
-	//	return;
-	//}
-
-	//获取常量设置
-	//D3DXHANDLE hBGCOLOR = mVSConstTable->GetConstantByName(NULL,"BGCOLOR");
-	//D3DXHANDLE bgColor = mVSConstTable->GetConstantByName(hBGCOLOR,"Color");
-	//float fColor[4] = { 1.0f,0.0f,0.0f,1.0f };
-	//mVSConstTable->SetFloatArray(m_d3dDevice, bgColor, fColor, 4);
-
-
-	//按索引获取句柄
-	//pConstTable->GetConstant(NULL, 0);
-	//pConstTable->GetConstantElement(NULL, 0);
-
-
-	hr = m_d3dDevice->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &mVertexShader);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"CreateVertexShader - failed", 0, 0);
-		return;
-	}
-
-	pShader->Release();
-
-	//-------------------------------------------------------------------------------------
-	//创建声明顶点
-	D3DVERTEXELEMENT9 dec[] = {
-	{0,0,D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_POSITION,0},//顶点位置
-	{0,12,D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_NORMAL,0},//顶点法向量
-	D3DDECL_END()//结束元素
-	};
-
-	//顶点声明
-	if (FAILED(m_d3dDevice->CreateVertexDeclaration(dec, &pVertexDecl))) {
-		MessageBox(NULL, L"CreateVertexDeclaration - failed", 0, 0);
-		return;
-	}
-
-	//设置材质，和环境光，漫反射系数
-	D3DXVECTOR4 vMtrlAmbient(0.8f, 0.8f, 0.8f, 1.0f);
-	D3DXVECTOR4 vMtrlDiffuse(0.8f, 0.8f, 0.8f, 1.0f);
-	mVSConstTable->SetVector(m_d3dDevice, "mtrlAmbient", &vMtrlAmbient);
-	mVSConstTable->SetVector(m_d3dDevice, "mtrlDiffuse", &vMtrlDiffuse);
-}
-
-//像素着色器
-void SandBox::PSShader()
-{
-	//创建着色器
-	LPD3DXBUFFER shader = 0;
-	LPD3DXBUFFER errorBuffer = 0;
-
-	HRESULT hr = D3DXCompileShaderFromFile(L"PixelShader.hlsl", 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
-	if (errorBuffer)
-	{
-		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
-		errorBuffer->Release();
-	}
-
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
-		return;
-	}
-
-
-	hr = m_d3dDevice->CreatePixelShader((DWORD*)shader->GetBufferPointer(), &mPixelShader);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"CreatePixelShader - failed", 0, 0);
-		return;
-	}
-
-	shader->Release();
-}
-
 void SandBox::PSShader01()
 {
 	//创建着色器
@@ -617,70 +512,6 @@ void SandBox::DrawIndexedUpHumTextureShader()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 4, 2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(RHWVertex));
 }
 
-void SandBox::DrawVSShader()
-{
-	//设置光照
-	//D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
-	D3DXVECTOR4 vLightDir(0.8f, 0.8f, 0.8f, 1.0f);
-
-	mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
-
-	//设置单位世界矩阵
-	D3DXMATRIX matWorld;
-	D3DXMatrixIdentity(&matWorld);
-	D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f);
-	mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
-
-	//取景变换矩阵
-	D3DXMATRIX matView;
-	D3DXVECTOR3 position(0.0f, 2.0f, -3.0f);//摄像机位置
-	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);//观察点位置
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);//向上的向量
-	D3DXMatrixLookAtLH(&matView, &position, &target, &up);
-
-	//投影变换矩阵
-	D3DXMATRIX matProj;
-	float aspect = (float)(mWidth / mHeight);
-	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
-
-	//组合变换
-	D3DXMATRIX matWorldViewProj = matWorld * matView * matProj;
-	mVSConstTable->SetMatrix(m_d3dDevice, "matWorldViewProj", &matWorldViewProj);
-
-	//绘制立方体
-	VSVertex vertex[] = {
-		{ -1.0f,1.0f ,-1.0f,0.0f,0.0f,1.0f}, // x, y, z, nx,ny,nz
-		{ 1.0f ,1.0f ,-1.0f,0.0f,0.0f,1.0f},
-		{ 1.0f ,-1.0f,-1.0f,0.0f,0.0f,1.0f},
-		{ -1.0f,-1.0f,-1.0f,0.0f,0.0f,1.0f},
-		{ -1.0f,1.0f ,1.0f,0.0f,0.0f,1.0f}, 
-		{ 1.0f ,1.0f ,1.0f,0.0f,0.0f,1.0f},
-		{ 1.0f ,-1.0f,1.0f,0.0f,0.0f,1.0f},
-		{ -1.0f,-1.0f,1.0f,0.0f,0.0f,1.0f},
-	};
-
-	//设置顶点着色器
-	m_d3dDevice->SetVertexShader(mVertexShader);
-	//设置顶点声明描述
-	m_d3dDevice->SetVertexDeclaration(pVertexDecl);
-
-	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	//m_d3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-
-	//绘制顶点缓存
-	short indexBuffer[] = { 
-		0,1,2,0,2,3,	//里面
-		0,4,7,0,7,3,	//左边
-		4,5,6,4,6,7,	//前面
-		5,1,2,5,2,6,	//右边
-		0,1,5,0,5,4,	//上面
-		3,2,6,3,6,7,	//下面
-	};
-	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(VSVertex));
-}
-
-
-
 void SandBox::RunCSO()
 {
 	std::ifstream fp;
@@ -702,14 +533,14 @@ void SandBox::RunCSO()
 void SandBox::SetUpMatrices()
 {
 	///四大变换之一：世界变换矩阵的设置
-	///[1]绕X旋转矩阵
+	///平移变换
 	//D3DXMATRIX T1;
 	//D3DXMatrixTranslation(&T1, -0.5f, 0.5f, 0.5f);
 	//m_d3dDevice->SetTransform(D3DTS_WORLD, &T1);
 
 	///四大变换之二：取景变换矩阵的设置
 	//D3DXMATRIX matView;
-	//D3DXVECTOR3 position(0.0f, 0.0f, -0.01f);//摄像机位置
+	//D3DXVECTOR3 position(0.0f, 0.0f, -1.5f);//摄像机位置
 	//D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);//观察点位置
 	//D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);//向上的向量
 	//D3DXMatrixLookAtLH(&matView, &position, &target, &up);
@@ -717,10 +548,10 @@ void SandBox::SetUpMatrices()
 
 	///四大变换之三：投影变换矩阵的设置
 	//透视投影矩阵
-	D3DXMATRIX proj;
-	float aspect = (float)(mWidth / mHeight);
-	D3DXMatrixPerspectiveFovLH(&proj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
-	m_d3dDevice->SetTransform(D3DTS_PROJECTION, &proj);
+	//D3DXMATRIX proj;
+	//float aspect = (float)(mWidth / mHeight);
+	//D3DXMatrixPerspectiveFovLH(&proj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
+	//m_d3dDevice->SetTransform(D3DTS_PROJECTION, &proj);
 
 	///四大变换之四：视口变换的设置
 	//D3DVIEWPORT9 vp;

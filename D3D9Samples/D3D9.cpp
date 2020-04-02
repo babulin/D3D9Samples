@@ -70,8 +70,8 @@ HRESULT D3D9::InitD3D()
 	d3dpp.Windowed = TRUE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-	//d3dpp.EnableAutoDepthStencil = TRUE;//自动维护深度缓存
-	//d3dpp.AutoDepthStencilFormat = D3DFMT_D16;//深度缓存像素格式[clear时清除ZBUFFER] D3DCLEAR_ZBUFFER
+	d3dpp.EnableAutoDepthStencil = TRUE;//自动维护深度缓存
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;//深度缓存像素格式[clear时清除ZBUFFER] D3DCLEAR_ZBUFFER
 
 	//创建device设备
 	if (FAILED(m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, mHwnd, vp, &d3dpp, &m_d3dDevice))) {
@@ -89,7 +89,7 @@ HRESULT D3D9::InitD3D()
 
 void D3D9::BeginScene()
 {
-	m_d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(50, 50, 50), 1.0f, 0);
+	m_d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 50, 50), 1.0f, 0);
 	m_d3dDevice->BeginScene();
 	//--------------------------------------------------
 }

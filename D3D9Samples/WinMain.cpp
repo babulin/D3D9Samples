@@ -1,12 +1,14 @@
 #include <GameWind.h>
 #include "D3D9.h"
 #include "SandBox.h"
+#include "ShaderBox.h" 
 #include "resource.h"
 #include <CommCtrl.h>
 
 GameWind* g_wnd;
 D3D9* g_d3d9;
 SandBox* g_sandBox;
+ShaderBox* g_sBox;
 //GameApp* gameApp;//游戏对象
 static MYCOLOR color = { 0,0,0 };
 
@@ -24,19 +26,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(g_wnd->mHwnd, TEXT("InitD3D初始化失败"), TEXT("错误提示"), MB_OK);
 	}
 
-
 	//初始化对象
 	g_sandBox = new SandBox(g_d3d9->m_d3dDevice);
 	g_sandBox->mWidth = static_cast<float>(g_wnd->mWidth);
 	g_sandBox->mHeight = static_cast<float>(g_wnd->mHeight);
-	g_sandBox->Init();
-	g_sandBox->SetIndices();
-	g_sandBox->SetTexture();
-	g_sandBox->SetHumTexture();
-	g_sandBox->VSShader();
-	g_sandBox->PSShader();
+
+	//g_sandBox->Init();
+	//g_sandBox->SetIndices();
+	//g_sandBox->SetTexture();
+	//g_sandBox->SetHumTexture();
 	//g_sandBox->PSShader01();
-	g_sandBox->SetTexture2X2();
+	//g_sandBox->SetTexture2X2();
+	
+	//初始化渲染box
+	g_sBox = new ShaderBox(g_d3d9->m_d3dDevice, g_wnd->mWidth, g_wnd->mHeight);
+	g_sBox->VSShader();
 
 	//对话框
 	//HWND hAbout = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)About);
@@ -53,7 +57,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//g_sandBox->DrawIndexedUpTexture();
 		//g_sandBox->DrawIndexedUpHumTexture();
 		//g_sandBox->DrawIndexedUpHumTextureShader();
-		g_sandBox->DrawVSShader();
+
+		g_sBox->DrawXYZ();
+		g_sBox->DrawVSShader();
+		
 		g_d3d9->EndScene();
 	}
 

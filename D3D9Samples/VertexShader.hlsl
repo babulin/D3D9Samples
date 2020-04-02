@@ -27,12 +27,16 @@ VS_OUTPUT vs_main(VS_INPUT input) {
 	
 	//顶点颜色
 	float4 LightDir = normalize(vecLightDir);
-	float4 Normalize = normalize(mul(input.Normal, matWorld));
-	float4 colorDiffuse = { 1.0f,1.0f,1.0f,1.0f };
-	float4 colorAmbient = { 0.5f,0.5f,0.5f,1.0f };
+	float4 Normalize = normalize(mul(input.Normal, matWorld));//(0.0f,0.0f,-1.0f) * 
+	float4 colorAmbient = { 1.0f,0.0f,0.0f,1.0f };//环境光颜色
+	float4 colorDiffuse = { 1.0f,1.0f,1.0f,1.0f };//漫反射颜色
 
 	//漫反射为蓝色 RGBA
-	output.Diffuse = colorAmbient * mtrlAmbient
-		+ colorDiffuse * saturate(dot(LightDir, Normalize)) * mtrlDiffuse;
+	//output.Diffuse =  colorAmbient* mtrlAmbient + colorDiffuse * saturate(dot(LightDir, Normalize)) * mtrlDiffuse;
+	
+	//环境光颜色 * 系数
+	output.Diffuse = colorAmbient * mtrlAmbient;
+	//
+	output.Diffuse += dot(LightDir, Normalize) * mtrlDiffuse * colorDiffuse;
 	return output;
 }
