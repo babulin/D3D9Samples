@@ -620,13 +620,15 @@ void SandBox::DrawIndexedUpHumTextureShader()
 void SandBox::DrawVSShader()
 {
 	//设置光照
-	D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
-	//D3DXVECTOR4 vLightDir(0.0f, 0.0f, 0.0f, 1.0f);
+	//D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
+	D3DXVECTOR4 vLightDir(0.8f, 0.8f, 0.8f, 1.0f);
+
 	mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
 
 	//设置单位世界矩阵
 	D3DXMATRIX matWorld;
 	D3DXMatrixIdentity(&matWorld);
+	D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f);
 	mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
 
 	//取景变换矩阵
@@ -635,16 +637,11 @@ void SandBox::DrawVSShader()
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);//观察点位置
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);//向上的向量
 	D3DXMatrixLookAtLH(&matView, &position, &target, &up);
-	m_d3dDevice->SetTransform(D3DTS_VIEW, &matView);
-	//m_d3dDevice->GetTransform(D3DTS_VIEW, &matView);		
 
 	//投影变换矩阵
 	D3DXMATRIX matProj;
 	float aspect = (float)(mWidth / mHeight);
 	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
-	m_d3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
-	//m_d3dDevice->GetTransform(D3DTS_PROJECTION, &matProj);	
-	D3DXMatrixRotationY(&matWorld, timeGetTime() / 1000.0f);
 
 	//组合变换
 	D3DXMATRIX matWorldViewProj = matWorld * matView * matProj;
