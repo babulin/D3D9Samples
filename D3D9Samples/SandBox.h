@@ -7,8 +7,7 @@ public:
 	float mHeight;
 private:
 	LPDIRECT3DDEVICE9 m_d3dDevice;			//D3D设备
-	LPDIRECT3DVERTEXBUFFER9 m_d3dBuffer;	//顶点缓冲区
-	LPDIRECT3DINDEXBUFFER9 m_d3dIndex;		//索引缓冲区
+
 	LPDIRECT3DTEXTURE9 m_Texture;			//纹理 - 图片1
 	LPDIRECT3DTEXTURE9 m_Texture1;			//纹理 - 图片2
 	LPDIRECT3DTEXTURE9 m_Texture2;			//纹理 - 图片3
@@ -26,8 +25,7 @@ private:
 	LPD3DXMESH pMeshTeapot = NULL;
 public:
 	SandBox(LPDIRECT3DDEVICE9 m_d3dDevice);
-	virtual HRESULT Init();
-	virtual HRESULT SetIndices();
+
 	void SetTexture();
 	void SetHumTexture();
 	void SetTexture2X2();

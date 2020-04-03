@@ -1,4 +1,6 @@
 #include <GameWind.h>
+#include "D3DApp.h"
+
 #include "D3D9.h"
 #include "SandBox.h"
 #include "ShaderBox.h" 
@@ -6,7 +8,8 @@
 #include <CommCtrl.h>
 
 GameWind* g_wnd;
-D3D9* g_d3d9;
+D3DApp* g_d3dApp;
+
 SandBox* g_sandBox;
 ShaderBox* g_sBox;
 //GameApp* gameApp;//游戏对象
@@ -18,18 +21,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//创建窗口
 	g_wnd = windCreate(hInstance, 800, 600, L"D3D9 PixelShader 2.0");
 
-	//创建D3D
-	g_d3d9 = new D3D9(g_wnd->mHwnd);
-
-	//初始化
-	if (FAILED(g_d3d9->InitD3D())) {
-		MessageBox(g_wnd->mHwnd, TEXT("InitD3D初始化失败"), TEXT("错误提示"), MB_OK);
+	//创建应用程序
+	g_d3dApp = new D3DApp(g_wnd);
+	if (FAILED(g_d3dApp->Init())) {
+		MessageBox(g_wnd->mHwnd, TEXT("D3DApp初始化失败"), TEXT("错误提示"), MB_OK);
 	}
 
-	//初始化对象
-	g_sandBox = new SandBox(g_d3d9->m_d3dDevice);
-	g_sandBox->mWidth = static_cast<float>(g_wnd->mWidth);
-	g_sandBox->mHeight = static_cast<float>(g_wnd->mHeight);
+	
+
+	////初始化对象
+	//g_sandBox = new SandBox(g_d3d9->m_d3dDevice);
+	//g_sandBox->mWidth = static_cast<float>(g_wnd->mWidth);
+	//g_sandBox->mHeight = static_cast<float>(g_wnd->mHeight);
 
 	//g_sandBox->Init();
 	//g_sandBox->SetIndices();
@@ -39,16 +42,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//g_sandBox->SetTexture2X2();
 	
 	//初始化渲染box
-	g_sBox = new ShaderBox(g_d3d9->m_d3dDevice, g_wnd->mWidth, g_wnd->mHeight);
+	//g_sBox = new ShaderBox(g_d3d9->m_d3dDevice, g_wnd->mWidth, g_wnd->mHeight);
 	
 	//加载着色器
-	LPDIRECT3DVERTEXSHADER9 mVShader = NULL;
-	LPD3DXCONSTANTTABLE mVSCTable = NULL;
-	wchar_t file[] = TEXT("VSxyz.hlsl");
-	g_sBox->LoadVS(file, mVShader, mVSCTable);
+	//LPDIRECT3DVERTEXSHADER9 mVShader = NULL;
+	//LPD3DXCONSTANTTABLE mVSCTable = NULL;
+	//wchar_t file[] = TEXT("VSxyz.hlsl");
+	//g_sBox->LoadVS(file, mVShader, mVSCTable);
 
 	//着色器
-	g_sBox->VSShader();
+	//g_sBox->VSShader();
 
 	//对话框
 	//HWND hAbout = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)About);
@@ -57,7 +60,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//游戏循环
 	while (g_wnd->ProcessMessage()) {
-		g_d3d9->BeginScene();
+
+		g_d3dApp->Render();
+		//g_d3d9->BeginScene();
 
 		//g_sandBox->Draw();
 		//g_sandBox->DrawUp();
@@ -66,12 +71,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//g_sandBox->DrawIndexedUpHumTexture();
 		//g_sandBox->DrawIndexedUpHumTextureShader();
 
-		g_sBox->DrawXYZ();
-		g_sBox->DrawVSShader();
+		//g_sBox->DrawXYZ();
+		//g_sBox->DrawVSShader();
 		
-		g_d3d9->EndScene();
+		//g_d3d9->EndScene();
 	}
 
+	g_d3dApp->Clear();
 	//删除对象
 	if (g_d3d9 != nullptr)
 		delete g_d3d9;

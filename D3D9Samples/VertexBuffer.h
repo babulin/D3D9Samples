@@ -1,12 +1,15 @@
 #pragma once
 #include "Base.h"
 
-class ShaderBox {
+class VertexBuffer {
 public:
 	float mWidth;
 	float mHeight;
 private:
 	LPDIRECT3DDEVICE9 m_d3dDevice;				//D3D设备
+
+	LPDIRECT3DVERTEXBUFFER9 m_d3dBuffer;		//顶点缓冲区
+	LPDIRECT3DINDEXBUFFER9 m_d3dIndex;			//索引缓冲区
 
 	LPD3DXCONSTANTTABLE mVSConstTable;			//常量表接口
 	LPD3DXCONSTANTTABLE mPSConstTable = NULL;	//常量表接口
@@ -15,10 +18,8 @@ private:
 
 	LPDIRECT3DVERTEXDECLARATION9 pVertexDecl;	//顶点描述
 public:
-	ShaderBox(LPDIRECT3DDEVICE9 d3dDevice,int width,int height);
-	void LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader,LPD3DXCONSTANTTABLE &mVSCTable);
-	void VSShader();
-	void PSShader();
-	void DrawXYZ();
-	void DrawVSShader();
+	VertexBuffer(LPDIRECT3DDEVICE9 d3dDevice, int width, int height);
+	HRESULT CreateVertex();
+	HRESULT CreateIndices();
+	void Draw();
 };
