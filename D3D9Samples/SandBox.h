@@ -26,14 +26,6 @@ private:
 public:
 	SandBox(LPDIRECT3DDEVICE9 m_d3dDevice);
 
-	void SetTexture();
-	void SetHumTexture();
-	void SetTexture2X2();
-	virtual void Draw();
-	void DrawUp();
-	void DrawIndexedUp();
-	void DrawIndexedUpTexture();
-	void DrawIndexedUpHumTexture();
 	void DrawIndexedUpHumTextureShader();
 	void PSShader01();
 	void RunCSO();

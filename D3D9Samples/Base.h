@@ -9,13 +9,17 @@
 #pragma comment(lib,"d3dx9.lib")//d3d¡¥Ω”ø‚
 #pragma comment(lib,"winmm.lib") //timeGetTime()
 
-struct MYCOLOR
-{
-	LONG R;
-	LONG G;
-	LONG B;
-};
+//D3DFMT_A8R8G8B8	ARGB
+#define COLOR_RED D3DCOLOR_ARGB(255, 255, 0, 0)
+#define COLOR_GREEN D3DCOLOR_ARGB(255, 0, 255, 0)
+#define COLOR_BLUE D3DCOLOR_ARGB(255, 0, 0, 255)
+#define COLOR_WHITE D3DCOLOR_ARGB(255, 255, 255, 255)
 
+//D3DFMT_A32B32G32R32F   RGBA
+#define COLORF_RED D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f)
+#define COLORF_GREEN D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f)
+#define COLORF_BLUE D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f)
+#define COLORF_WHITE D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f)
 
 struct D3Vertex
 {
@@ -24,7 +28,15 @@ struct D3Vertex
 	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
 };
 
-struct UVVertex
+struct UV1Vertex
+{
+	float x, y, z;
+	DWORD color;
+	float u, v;
+	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
+};
+
+struct UV2Vertex
 {
 	float x, y, z;
 	DWORD color;
@@ -33,7 +45,7 @@ struct UVVertex
 	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX2;
 };
 
-struct UV2Vertex
+struct UV3Vertex
 {
 	float x, y, z;
 	DWORD color;

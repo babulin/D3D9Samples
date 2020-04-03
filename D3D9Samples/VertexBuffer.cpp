@@ -3,19 +3,28 @@
 VertexBuffer::VertexBuffer(LPDIRECT3DDEVICE9 d3dDevice, int width, int height)
 {
 	m_d3dDevice = d3dDevice;
-	mWidth = width;
-	mHeight = height;
+	mWidth = static_cast<float>(width);
+	mHeight = static_cast<float>(height);
 }
 
+void VertexBuffer::Init()
+{
+	CreateVertex();
+	CreateIndices();
+}
+
+/*创建顶点缓存*/
 HRESULT VertexBuffer::CreateVertex()
 {
 	//创建顶点缓存
+	// 0  1
+	// 3  2
 	float x = 0.5f, y = 0.5f;
 	D3Vertex vertex[] = {
-		{ -x, -y, 1.0f	, 0xffffffff, }, // x, y, z, rhw, color
-		{ -x, y	, 1.0f	, 0x00ffffff, },
-		{ x	, y	, 1.0f	, 0xff00ffff, },
-		{ x	, -y, 1.0f	, 0xffff00ff, },
+		{ -x,  y, 1.0f, COLOR_RED},
+		{  x,  y, 1.0f, COLOR_GREEN},
+		{  x, -y, 1.0f, COLOR_BLUE},
+		{ -x, -y, 1.0f, COLOR_WHITE},
 	};
 
 	if (FAILED(m_d3dDevice->CreateVertexBuffer(sizeof(vertex), 0, D3Vertex::FVF, D3DPOOL_DEFAULT, &m_d3dBuffer, NULL))) {
@@ -34,10 +43,11 @@ HRESULT VertexBuffer::CreateVertex()
 	return S_OK;
 }
 
+//创建索引缓存
 HRESULT VertexBuffer::CreateIndices()
 {
 	//创建索引缓存
-	short indexBuffer[6] = { 0,1,3,1,2,3 };
+	short indexBuffer[6] = { 0,1,2,0,2,3 };
 	if (FAILED(m_d3dDevice->CreateIndexBuffer(sizeof(indexBuffer), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndex, NULL)))
 	{
 		return E_FAIL;
@@ -55,8 +65,10 @@ HRESULT VertexBuffer::CreateIndices()
 	return S_OK;
 }
 
+//绘制
 void VertexBuffer::Draw()
 {
+	//关闭光照
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
@@ -70,3 +82,66 @@ void VertexBuffer::Draw()
 	m_d3dDevice->SetIndices(m_d3dIndex);
 	m_d3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 6, 0, 2);
 }
+
+//直接使用顶点绘制
+void VertexBuffer::DrawPrimitiveUP()
+{
+	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);//背面消影
+	//m_d3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);//填充模式
+
+	//创建顶点缓存
+
+	//0 1	//0  
+	//  2   //3 2
+	float x = 0.5f, y = 0.5f;
+	D3Vertex vertex[] = {
+		{-x , y, 1.0f, COLOR_RED }, // x, y, z, rhw, color
+		{ x	, y, 1.0f, COLOR_GREEN },
+		{ x ,-y, 1.0f, COLOR_BLUE },
+		{-x	, y, 1.0f, COLOR_RED },
+		{ x	,-y, 1.0f, COLOR_BLUE },
+		{-x ,-y, 1.0f, COLOR_WHITE },
+	};
+
+	//使用纹理
+
+	//绘制顶点缓存
+	m_d3dDevice->SetFVF(D3Vertex::FVF);
+	m_d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, vertex, sizeof(D3Vertex));
+}
+
+//直接使用顶点 索引绘制
+void VertexBuffer::DrawIndexedPrimitiveUP()
+{
+	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	//创建顶点缓存
+	//0 1 
+	//3 2
+	float x = 0.5f, y = 0.5f;
+	D3Vertex vertex[] = {
+		{-x , y, 1.0f, COLOR_RED },
+		{ x	, y, 1.0f, COLOR_GREEN },
+		{ x ,-y, 1.0f, COLOR_BLUE },
+		{-x ,-y, 1.0f, COLOR_WHITE },
+	};
+
+	//使用纹理
+
+	//绘制顶点缓存
+	m_d3dDevice->SetFVF(D3Vertex::FVF);
+	short indexBuffer[6] = { 0,1,2,0,2,3 };
+	m_d3dDevice->DrawIndexedPrimitiveUP(
+		D3DPT_TRIANGLELIST,					//图元拓扑
+		0,									//
+		ARRAYSIZE(indexBuffer),				//顶点个数
+		ARRAYSIZE(indexBuffer) / 3,			//图元个数
+		indexBuffer,						//顶点索引数组
+		D3DFMT_INDEX16,						//顶点索引格式
+		vertex,								//顶点数组
+		sizeof(D3Vertex)					//一组顶点的大小
+	);
+}
+
