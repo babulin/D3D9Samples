@@ -57,6 +57,8 @@ void D3DApp::Render()
 
 void D3DApp::Clear()
 {
+	OutputDebugString(TEXT("D3DApp::Clear()Îö¹¹\n"));
+
 	//É¾³ý¶ÔÏó
 	if (g_d3d9 != nullptr)
 		delete g_d3d9;

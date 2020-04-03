@@ -27,9 +27,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	g_d3dApp->Clear();
 
+	if (g_d3dApp != nullptr)
+	{
+		delete g_d3dApp;
+	}
 
-	if (g_wnd != nullptr)
+	if (g_wnd != nullptr) {
 		delete g_wnd;
+	}
 
 	return 0;
 }
