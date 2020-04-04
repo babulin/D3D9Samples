@@ -2,11 +2,12 @@
 #include "SandBox.h"
 #include "VertexBuffer.h"
 #include "Texture.h"
+#include "Shader.h"
 
 SandBox* g_sBox;
 VertexBuffer* g_vBuff;
 Texture* g_texture;
-
+Shader* g_shader;
 D3DApp::D3DApp(GameWind* wnd)
 {
 	pWnd = wnd;
@@ -34,6 +35,11 @@ HRESULT D3DApp::Init()
 	//------------------------------------
 	g_texture = new Texture(g_d3d9->m_d3dDevice, pWnd->mWidth, pWnd->mHeight);
 	g_texture->Init();
+
+	//------------------------------------
+	g_shader = new Shader(g_d3d9->m_d3dDevice, pWnd->mWidth, pWnd->mHeight);
+	g_shader->Init();
+
 	return S_OK;
 }
 
@@ -49,8 +55,12 @@ void D3DApp::Render()
 	//»æÖÆ
 	//g_texture->DrawPrimitiveUPUV1();
 	//g_texture->DrawIndexedPrimitiveUPUV2();
-	g_texture->DrawIndexedPrimitiveUPUV2x2();
+	//g_texture->DrawIndexedPrimitiveUPUV2x2();
 
+	//»æÖÆ
+	//g_shader->DrawPrimitiveUPUV1();
+	//g_shader->DrawIndexedPrimitiveUPUV2();
+	g_shader->DrawIndexedPrimitiveUPUV2x2();
 
 	g_d3d9->EndScene();
 }

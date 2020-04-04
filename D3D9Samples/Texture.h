@@ -5,7 +5,7 @@ class Texture {
 public:
 	float mWidth;
 	float mHeight;
-private:
+protected:
 	LPDIRECT3DDEVICE9 m_d3dDevice;				//D3D设备
 
 	LPDIRECT3DTEXTURE9 mTextureBG1;				//纹理 - 背景1
@@ -15,11 +15,11 @@ private:
 	LPDIRECT3DTEXTURE9 mTexture2x2;				//纹理 - 2x2
 public:
 	Texture(LPDIRECT3DDEVICE9 d3dDevice, int width, int height);
-	void Init();
+	virtual void Init();
 	HRESULT CreateTexture();
 	HRESULT CreateTexture1x1();
 	HRESULT CreateTexture2x2();
-	void DrawPrimitiveUPUV1();
-	void DrawIndexedPrimitiveUPUV2();
-	void DrawIndexedPrimitiveUPUV2x2();
+	virtual void DrawPrimitiveUPUV1();
+	virtual void DrawIndexedPrimitiveUPUV2();
+	virtual void DrawIndexedPrimitiveUPUV2x2();
 };

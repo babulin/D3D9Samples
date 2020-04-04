@@ -162,6 +162,7 @@
     <ClCompile Include="D3DApp.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="D3D9.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderBox.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="SandBox.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="D3D9.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderBox.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexBuffer.h" />
