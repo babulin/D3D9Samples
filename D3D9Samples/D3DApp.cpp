@@ -8,37 +8,35 @@ SandBox* g_sBox;
 VertexBuffer* g_vBuff;
 Texture* g_texture;
 Shader* g_shader;
-D3DApp::D3DApp(GameWind* wnd)
+D3DApp::D3DApp(GameWind* GameWind)
 {
-	pWnd = wnd;
-	mWidth = static_cast<float>(wnd->mWidth);
-	mHeight = static_cast<float>(wnd->mHeight);
+	pGameWind = GameWind;
+	g_d3d9 = nullptr;
 }
 
 HRESULT D3DApp::Init()
 {
 	//创建D3D
-	g_d3d9 = new D3D9(pWnd->mHwnd);
+	g_d3d9 = new D3D9(pGameWind);
 
 	//初始化
 	if (FAILED(g_d3d9->InitD3D())) {
-		MessageBox(pWnd->mHwnd, TEXT("InitD3D初始化失败"), TEXT("错误提示"), MB_OK);
+		MessageBox(pGameWind->mHwnd, TEXT("InitD3D初始化失败"), TEXT("错误提示"), MB_OK);
 	}
 
 	//------------------------------------
-	//三角形
-	g_vBuff = new VertexBuffer(g_d3d9->m_d3dDevice,pWnd->mWidth,pWnd->mHeight);
-
-	//创建顶点
-	g_vBuff->Init();
+	//顶点缓冲与索引缓冲
+	//g_vBuff = new VertexBuffer(g_d3d9);
+	//g_vBuff->Init();
 
 	//------------------------------------
-	g_texture = new Texture(g_d3d9->m_d3dDevice, pWnd->mWidth, pWnd->mHeight);
+	//纹理贴图
+	g_texture = new Texture(g_d3d9);
 	g_texture->Init();
 
 	//------------------------------------
-	g_shader = new Shader(g_d3d9->m_d3dDevice, pWnd->mWidth, pWnd->mHeight);
-	g_shader->Init();
+	//g_shader = new Shader(g_d3d9->m_d3dDevice, pGameWind->mWidth, pGameWind->mHeight);
+	//g_shader->Init();
 
 	return S_OK;
 }
@@ -55,12 +53,12 @@ void D3DApp::Render()
 	//绘制
 	//g_texture->DrawPrimitiveUPUV1();
 	//g_texture->DrawIndexedPrimitiveUPUV2();
-	//g_texture->DrawIndexedPrimitiveUPUV2x2();
+	g_texture->DrawIndexedPrimitiveUPUV2x2();
 
 	//绘制
 	//g_shader->DrawPrimitiveUPUV1();
 	//g_shader->DrawIndexedPrimitiveUPUV2();
-	g_shader->DrawIndexedPrimitiveUPUV2x2();
+	//g_shader->DrawIndexedPrimitiveUPUV2x2();
 
 	g_d3d9->EndScene();
 }

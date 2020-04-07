@@ -4,13 +4,10 @@
 #include "Base.h"
 
 class D3DApp {
-	GameWind* pWnd;
+	GameWind* pGameWind;
 	D3D9* g_d3d9;
-	LPDIRECT3DDEVICE9 m_d3dDevice;
-	float mWidth;
-	float mHeight;
 public:
-	D3DApp(GameWind* wnd);
+	D3DApp(GameWind* GameWind);
 	HRESULT Init();
 	void Render();
 	void Clear();

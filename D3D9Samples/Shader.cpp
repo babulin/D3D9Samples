@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(LPDIRECT3DDEVICE9 d3dDevice, int width, int height):Texture(d3dDevice,width,height)
+Shader::Shader(D3D9* d3d9):Texture(d3d9)
 {
 
 }
@@ -103,18 +103,10 @@ void Shader::DrawIndexedPrimitiveUPUV2x2()
 	m_d3dDevice->SetTexture(0, mTextureBG1);
 	m_d3dDevice->SetTexture(1, mTexture2x2);
 
-	//纹理融合
-	for (DWORD i = 0; i < 2; ++i)
-	{
-		// Color通道混合算法设置（纹理 * 当前）
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLORARG2, D3DTA_CURRENT);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLOROP, D3DTOP_MODULATE);
-		// Alpha通道混合算法设置（纹理 * 当前）
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	}
+	//使用顶点着色器
+
+	//使用像素着色器
+
 
 	//设置纹理采样
 	m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);

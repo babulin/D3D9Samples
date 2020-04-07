@@ -1,10 +1,9 @@
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(LPDIRECT3DDEVICE9 d3dDevice, int width, int height)
+VertexBuffer::VertexBuffer(D3D9* d3d9):Device(d3d9)
 {
-	m_d3dDevice = d3dDevice;
-	mWidth = static_cast<float>(width);
-	mHeight = static_cast<float>(height);
+	m_d3dBuffer = nullptr;		//顶点缓冲区
+	m_d3dIndex = nullptr;		//索引缓冲区
 }
 
 void VertexBuffer::Init()

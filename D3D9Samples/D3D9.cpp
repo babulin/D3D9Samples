@@ -1,9 +1,9 @@
 #include "D3D9.h"
 
-D3D9::D3D9(HWND hwnd)
+D3D9::D3D9(GameWind* GameWind)
 {
 	OutputDebugString(TEXT("D3D9()构造\n"));
-	mHwnd = hwnd;
+	pGameWind = GameWind;
 	m_d3dDevice = nullptr;
 }
 
@@ -58,11 +58,11 @@ HRESULT D3D9::InitD3D()
 
 	//检测shader版本
 	if (caps.VertexShaderVersion < D3DVS_VERSION(3,0)) {
-		MessageBox(mHwnd, L"不支持3.0顶点着色器",L"提示",NULL);
+		MessageBox(pGameWind->mHwnd, L"不支持3.0顶点着色器",L"提示",NULL);
 	}
 
 	if (caps.PixelShaderVersion < D3DPS_VERSION(3, 0)) {
-		MessageBox(mHwnd, L"不支持3.0像素着色器", L"提示", NULL);
+		MessageBox(pGameWind->mHwnd, L"不支持3.0像素着色器", L"提示", NULL);
 	}
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -74,7 +74,7 @@ HRESULT D3D9::InitD3D()
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;//深度缓存像素格式[clear时清除ZBUFFER] D3DCLEAR_ZBUFFER
 
 	//创建device设备
-	if (FAILED(m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, mHwnd, vp, &d3dpp, &m_d3dDevice))) {
+	if (FAILED(m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, pGameWind->mHwnd, vp, &d3dpp, &m_d3dDevice))) {
 		return E_FAIL;
 	}
 

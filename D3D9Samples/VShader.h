@@ -1,7 +1,7 @@
 #pragma once
 #include "Base.h"
-
-class ShaderBox {
+#include "Device.h"
+class VShader : public Device{
 public:
 	float mWidth;
 	float mHeight;
@@ -15,10 +15,10 @@ private:
 
 	LPDIRECT3DVERTEXDECLARATION9 pVertexDecl;	//∂•µ„√Ë ˆ
 public:
-	ShaderBox(LPDIRECT3DDEVICE9 d3dDevice,int width,int height);
+	VShader(D3D9* d3d9);
 	void LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader,LPD3DXCONSTANTTABLE &mVSCTable);
-	void VSShader();
-	void PSShader();
+	void VSShader(wchar_t file[]);
+	void PSShader(wchar_t file[]);
 	void DrawXYZ();
 	void DrawVSShader();
 };

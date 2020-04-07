@@ -1,10 +1,13 @@
 #include "Texture.h"
 
-Texture::Texture(LPDIRECT3DDEVICE9 d3dDevice, int width, int height)
+Texture::Texture(D3D9* d3d9)
+:Device(d3d9)
 {
-	m_d3dDevice = d3dDevice;
-	mWidth = static_cast<float>(width);
-	mHeight = static_cast<float>(height);
+	 mTextureBG1 = nullptr;				//Œ∆¿Ì - ±≥æ∞1
+	 mTextureBG2 = nullptr;				//Œ∆¿Ì - ±≥æ∞2
+	 mTextureBG3 = nullptr;				//Œ∆¿Ì - ±≥æ∞3
+	 mTexture1x1 = nullptr;				//Œ∆¿Ì - 1x1
+	 mTexture2x2 = nullptr;				//Œ∆¿Ì - 2x2
 }
 
 void Texture::Init()

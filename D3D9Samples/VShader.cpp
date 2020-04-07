@@ -1,13 +1,10 @@
-#include "ShaderBox.h"
-
-ShaderBox::ShaderBox(LPDIRECT3DDEVICE9 d3dDevice,int width,int height)
+#include "VShader.h"
+VShader::VShader(D3D9* d3d9):Device(d3d9)
 {
-	m_d3dDevice = d3dDevice;
-	mWidth = static_cast<float>(width);
-	mHeight = static_cast<float>(height);
+
 }
 
-void ShaderBox::LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader, LPD3DXCONSTANTTABLE &mVSCTable)
+void VShader::LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader, LPD3DXCONSTANTTABLE &mVSCTable)
 {
 	//---------------------------------------------------
 //创建着色器
@@ -37,14 +34,14 @@ void ShaderBox::LoadVS(wchar_t file[], LPDIRECT3DVERTEXSHADER9 &mVShader, LPD3DX
 	pShader->Release();
 }
 
-void ShaderBox::VSShader()
+void VShader::VSShader(wchar_t file[])
 {
 	//---------------------------------------------------
-	//创建着色器
 	LPD3DXBUFFER pShader = NULL;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(L"VertexShader.hlsl", 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSConstTable);
+	//编译着色器
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "vs_main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSConstTable);
 	if (errorBuffer)
 	{
 		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
@@ -57,27 +54,7 @@ void ShaderBox::VSShader()
 		return;
 	}
 
-	//获取常量
-	//D3DXHANDLE hWorldViewProjMatrix;
-	//hWorldViewProjMatrix = mVSConstTable->GetConstantByName(NULL,"WorldViewProjMatrix");
-	//if (hWorldViewProjMatrix == NULL)
-	//{
-	//	MessageBox(NULL, L"获取常量 - failed", 0, 0);
-	//	return;
-	//}
-
-	//获取常量设置
-	//D3DXHANDLE hBGCOLOR = mVSConstTable->GetConstantByName(NULL,"BGCOLOR");
-	//D3DXHANDLE bgColor = mVSConstTable->GetConstantByName(hBGCOLOR,"Color");
-	//float fColor[4] = { 1.0f,0.0f,0.0f,1.0f };
-	//mVSConstTable->SetFloatArray(m_d3dDevice, bgColor, fColor, 4);
-
-
-	//按索引获取句柄
-	//pConstTable->GetConstant(NULL, 0);
-	//pConstTable->GetConstantElement(NULL, 0);
-
-
+	//创建顶点着色器
 	hr = m_d3dDevice->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &mVertexShader);
 	if (FAILED(hr))
 	{
@@ -108,13 +85,14 @@ void ShaderBox::VSShader()
 	mVSConstTable->SetVector(m_d3dDevice, "mtrlDiffuse", &vMtrlDiffuse);
 }
 
-void ShaderBox::PSShader()
+void VShader::PSShader(wchar_t file[])
 {
-	//创建着色器
+	//---------------------------------------------------
 	LPD3DXBUFFER shader = 0;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(L"PixelShader.hlsl", 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
+	//编译着色器
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
 	if (errorBuffer)
 	{
 		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
@@ -127,7 +105,7 @@ void ShaderBox::PSShader()
 		return;
 	}
 
-
+	//创建像素着色器
 	hr = m_d3dDevice->CreatePixelShader((DWORD*)shader->GetBufferPointer(), &mPixelShader);
 	if (FAILED(hr))
 	{
@@ -138,7 +116,7 @@ void ShaderBox::PSShader()
 	shader->Release();
 }
 
-void ShaderBox::DrawXYZ()
+void VShader::DrawXYZ()
 {
 	//绘制立方体
 	D3Vertex vertex[] = {
@@ -167,7 +145,7 @@ void ShaderBox::DrawXYZ()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, ARRAYSIZE(indexBuffer), ARRAYSIZE(indexBuffer)/2, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(D3Vertex));
 }
 
-void ShaderBox::DrawVSShader()
+void VShader::DrawVSShader()
 {
 
 	//旋转矩阵

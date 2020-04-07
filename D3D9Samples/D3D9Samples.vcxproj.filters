@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Primitive">
+      <UniqueIdentifier>{da84c056-430f-4f88-9fbd-fdef1b77492e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -22,9 +25,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SandBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
@@ -39,6 +39,9 @@
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="VShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D9.h">
@@ -50,20 +53,23 @@
     <ClInclude Include="SandBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3DApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="VShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>头文件\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>头文件\Primitive</Filter>
+    </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>头文件\Primitive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

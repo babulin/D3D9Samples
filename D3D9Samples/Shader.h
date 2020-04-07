@@ -5,7 +5,7 @@
 class Shader :public Texture{
 
 public:
-	Shader(LPDIRECT3DDEVICE9 d3dDevice, int width, int height);
+	Shader(D3D9* d3d9);
 	void Init();
 	void DrawPrimitiveUPUV1();
 	void DrawIndexedPrimitiveUPUV2();

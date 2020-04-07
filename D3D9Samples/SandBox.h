@@ -29,7 +29,4 @@ public:
 	void DrawIndexedUpHumTextureShader();
 	void PSShader01();
 	void RunCSO();
-
-	virtual void SetUpMatrices();
-
 };

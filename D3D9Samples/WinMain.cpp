@@ -1,9 +1,5 @@
 #include <GameWind.h>
 #include "D3DApp.h"
-
-#include "D3D9.h"
-#include "SandBox.h"
-#include "ShaderBox.h" 
 #include <CommCtrl.h>
 
 GameWind* g_wnd;
