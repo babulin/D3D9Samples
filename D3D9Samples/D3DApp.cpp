@@ -31,12 +31,12 @@ HRESULT D3DApp::Init()
 
 	//------------------------------------
 	//ÎÆÀíÌùÍ¼
-	g_texture = new Texture(g_d3d9);
-	g_texture->Init();
+	//g_texture = new Texture(g_d3d9);
+	//g_texture->Init();
 
 	//------------------------------------
-	//g_shader = new Shader(g_d3d9->m_d3dDevice, pGameWind->mWidth, pGameWind->mHeight);
-	//g_shader->Init();
+	g_shader = new Shader(g_d3d9);
+	g_shader->Init();
 
 	return S_OK;
 }
@@ -53,9 +53,11 @@ void D3DApp::Render()
 	//»æÖÆ
 	//g_texture->DrawPrimitiveUPUV1();
 	//g_texture->DrawIndexedPrimitiveUPUV2();
-	g_texture->DrawIndexedPrimitiveUPUV2x2();
+	//g_texture->DrawIndexedPrimitiveUPUV2x2();
 
 	//»æÖÆ
+	//g_shader->DrawVSShader();
+	g_shader->DrawSquare();
 	//g_shader->DrawPrimitiveUPUV1();
 	//g_shader->DrawIndexedPrimitiveUPUV2();
 	//g_shader->DrawIndexedPrimitiveUPUV2x2();

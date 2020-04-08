@@ -26,6 +26,8 @@ struct D3Vertex
 	float x, y, z;
 	DWORD color;
 	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
+	D3Vertex(float _x, float _y, float _z, DWORD _color) 
+		:x(_x), y(_y), z(_z), color(_color) {};
 };
 
 struct UV1Vertex
@@ -71,4 +73,13 @@ struct VSVertex {
 	VSVertex(float x, float y, float z, float nx, float ny, float nz)
 		:x(x), y(y), z(z), nx(nx), ny(ny), nz(nz) {}
 	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
+};
+
+struct VS1Vertex
+{
+	float x, y, z;
+	D3DXVECTOR4 color;
+	static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
+	VS1Vertex(float _x, float _y, float _z, D3DXVECTOR4 _color)
+		:x(_x), y(_y), z(_z), color(_color) {};
 };

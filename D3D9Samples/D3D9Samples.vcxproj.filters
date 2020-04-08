@@ -16,31 +16,37 @@
     <Filter Include="头文件\Primitive">
       <UniqueIdentifier>{da84c056-430f-4f88-9fbd-fdef1b77492e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\图元">
+      <UniqueIdentifier>{ddf19be7-b7dc-4225-b5bb-cd522102fcab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core">
+      <UniqueIdentifier>{c6783f93-1793-442e-875f-6d3cbfe83874}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WinMain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D9.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="SandBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3DApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="VShader.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>源文件\图元</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>源文件\图元</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>源文件\图元</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>源文件\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,7 +88,7 @@
     <FxCompile Include="PixelShader_01.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
-    <FxCompile Include="VSxyz.hlsl">
+    <FxCompile Include="VS01_Shader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
   </ItemGroup>
