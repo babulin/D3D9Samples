@@ -91,6 +91,9 @@
     <FxCompile Include="VS01_Shader.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
+    <FxCompile Include="PS01_Shader.hlsl">
+      <Filter>资源文件</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D3D9Samples.rc">

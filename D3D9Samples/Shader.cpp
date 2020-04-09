@@ -4,6 +4,7 @@ Shader::Shader(D3D9* d3d9):Texture(d3d9)
 {
 	//创建shader
 	g_vshader = new VShader(d3d9);
+	g_pshader = new VShader(d3d9);
 }
 
 Shader::~Shader()
@@ -11,6 +12,10 @@ Shader::~Shader()
 	if (g_vshader != nullptr)
 	{
 		delete g_vshader;
+	}
+	if (g_pshader != nullptr)
+	{
+		delete g_pshader;
 	}
 }
 
@@ -30,9 +35,11 @@ void Shader::Init()
 		{0,12,D3DDECLTYPE_FLOAT4,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_COLOR,0},//漫反射颜色
 		D3DDECL_END()//结束元素
 	};
-
 	g_vshader->VSShader(L"VS01_Shader.hlsl", element);
 
+
+	//--------------------------------------------------------------------------------------
+	g_pshader->PSShader(L"PS01_Shader.hlsl");
 }
 
 void Shader::DrawVSShader()
@@ -131,6 +138,7 @@ void Shader::SetMatrices()
 	g_vshader->mVSConstTable->SetMatrix(m_d3dDevice, "matWorldViewProj", &matWorldViewProj);
 }
 
+//绘制正方形 顶点着色器
 void Shader::DrawSquare()
 {
 	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);//背面消影
@@ -172,9 +180,6 @@ void Shader::DrawSquare()
 		VS1Vertex(-x,-y,1.0f,COLORF_WHITE),
 	};
 
-	//设置灵活顶点格式
-	//m_d3dDevice->SetFVF(VS1Vertex::FVF);
-
 	//使用顶点着色器
 	m_d3dDevice->SetVertexShader(g_vshader->mVertexShader);
 
@@ -188,14 +193,24 @@ void Shader::DrawSquare()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, ARRAYSIZE(indexBuffer), ARRAYSIZE(indexBuffer) / 3, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(VS1Vertex));
 }
 
+
+
 void Shader::DrawPrimitiveUPUV1()
 {
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
-	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	//旋转矩阵
+	D3DXMATRIX matWorld;
+	SetRotation(&matWorld);
+	if (GetAsyncKeyState('1')) {
+		D3DXMatrixIdentity(&matWorld);
+	}
+	g_pshader->mPSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
 
 	//0 1    //0 
 	//  2    //3 2
-	float x = 0.8f, y = 0.8f;
+	float x = 0.9f, y = 0.9f;
 	float min = 0.0f, max = 1.0f;
 	UV1Vertex vertex[] = {
 		{-x , y, 1.0f, COLOR_RED	,min,min},
@@ -206,10 +221,14 @@ void Shader::DrawPrimitiveUPUV1()
 		{-x ,-y, 1.0f, COLOR_WHITE	,min,max},
 	};
 
-	//使用顶点着色器
+	//使用像素着色器
+	m_d3dDevice->SetPixelShader(g_pshader->mPixelShader);
 
 	//使用纹理
 	m_d3dDevice->SetTexture(0, mTextureBG1);
+
+	//m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//m_d3dDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 
 	//绘制顶点缓存
 	m_d3dDevice->SetFVF(UV1Vertex::FVF);

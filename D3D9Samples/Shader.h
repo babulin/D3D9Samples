@@ -6,6 +6,7 @@
 class Shader :public Texture{
 public:
 	VShader* g_vshader;
+	VShader* g_pshader;
 public:
 	Shader(D3D9* d3d9);
 	~Shader();

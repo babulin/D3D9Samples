@@ -85,14 +85,14 @@ void VShader::VSShader(const wchar_t file[],D3DVERTEXELEMENT9 element[])
 	//mVSConstTable->SetVector(m_d3dDevice, "mtrlDiffuse", &vMtrlDiffuse);
 }
 
-void VShader::PSShader(wchar_t file[])
+void VShader::PSShader(const wchar_t file[])
 {
 	//---------------------------------------------------
 	LPD3DXBUFFER shader = 0;
 	LPD3DXBUFFER errorBuffer = 0;
 
 	//±àÒë×ÅÉ«Æ÷
-	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "ps_main", "ps_2_0", D3DXSHADER_DEBUG, &shader, &errorBuffer, &mPSConstTable);
 	if (errorBuffer)
 	{
 		MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
