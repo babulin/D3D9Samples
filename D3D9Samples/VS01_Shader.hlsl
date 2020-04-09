@@ -2,7 +2,8 @@
 matrix matWorld;//变换矩阵
 matrix matView;//
 matrix matProj;//
-matrix matWVP;	//组合变换矩阵
+matrix matWVP;//组合变换矩阵
+float4 matTran;//平移
 
 //输入参数
 struct VS_INPUT {
@@ -31,7 +32,7 @@ VS_OUTPUT vs_main(VS_INPUT input)
 	output.position = mul(input.position, matProj);//透视投影
 
 	//漫反射
-	output.diffuse = mul(input.diffuse, matWorld);//漫反射
+	output.diffuse = mul(input.diffuse, matWorld) + matTran;//漫反射
 
 	return output;
 }

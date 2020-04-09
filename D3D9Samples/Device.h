@@ -16,10 +16,12 @@ public:
 	};
 
 	//旋转变换矩阵
-	HRESULT SetRotation(D3DXMATRIX* matWorld) {
+	HRESULT SetRotation(D3DXMATRIX* matWorld, float* matTran = nullptr,D3DXMATRIX* matTs = nullptr) {
 		//旋转矩阵
-		D3DXMATRIX Rx, Ry ,Rz;
+		D3DXMATRIX Rx, Ry, Rz;
 		static float Vx = 0.0f, Vy = 0.0f,Vz = 0.0f;
+
+		//X
 		if (GetAsyncKeyState('W')) {
 			Vx += 0.01f;
 		}
@@ -29,9 +31,9 @@ public:
 		if (Vx > 6.28f) {
 			Vx = 0.0f;
 		}
-
 		D3DXMatrixRotationX(&Rx, Vx);
 
+		//Y
 		if (GetAsyncKeyState('A')) {
 			Vy += 0.01f;
 		}
@@ -43,7 +45,7 @@ public:
 		}
 		D3DXMatrixRotationY(&Ry, Vy);
 
-
+		//Z
 		if (GetAsyncKeyState('Q')) {
 			Vz += 0.01f;
 		}
@@ -55,11 +57,47 @@ public:
 		}
 		D3DXMatrixRotationZ(&Rz, Vz);
 
+
+		//平移
+		static float Dx = 0.0f, Dy = 0.0f, Dz = 0.0f;
+		if (GetAsyncKeyState('T')) {
+			Dy += 0.01f;
+		}
+		if (GetAsyncKeyState('H')) {
+			Dx += 0.01f;
+		}
+		if (GetAsyncKeyState('G')) {
+			Dy -= 0.01f;
+		}
+		if (GetAsyncKeyState('F')) {
+			Dx -= 0.01f;
+		}
+		if (GetAsyncKeyState('R')) {
+			Dz += 0.01f;
+		}
+		if (GetAsyncKeyState('Y')) {
+			Dz -= 0.01f;
+		}
+		if (matTran != nullptr)
+		{
+			matTran[0] = Dx;
+			matTran[1] = Dy;
+			matTran[2] = Dz;
+			matTran[3] = 0.0f;
+		}
+
+		if (matTs != nullptr)
+		{
+			D3DXMatrixTranslation(matTs, Dx, Dy, Dz);
+		}
+
+		//wchar_t buf[100];
+		//swprintf_s(buf, TEXT("%.2f,%.2f,%.2f\n"),Dx, Dy, Dz);
+		//OutputDebugString(buf);
+
 		//设置单位世界矩阵
-		//D3DXMATRIX matWorld;
 		D3DXMatrixIdentity(matWorld);
 		*matWorld = (*matWorld) * Rx * Ry * Rz;
-		//g_vshader->mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
 
 		return S_OK;
 	}

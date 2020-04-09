@@ -4,6 +4,7 @@ Shader::Shader(D3D9* d3d9):Texture(d3d9)
 {
 	//创建shader
 	g_vshader = new VShader(d3d9);
+	g_vsSample = new VShader(d3d9);
 	g_pshader = new VShader(d3d9);
 }
 
@@ -13,6 +14,11 @@ Shader::~Shader()
 	{
 		delete g_vshader;
 	}
+	if (g_vsSample != nullptr)
+	{
+		delete g_vsSample;
+	}
+
 	if (g_pshader != nullptr)
 	{
 		delete g_pshader;
@@ -29,7 +35,22 @@ void Shader::Init()
 	//g_vshader->VSShader(L"VertexShader.hlsl");
 
 	//-------------------------------------------------------------------------------------
-	//创建声明顶点
+	//创建声明顶点 【案例】
+	D3DVERTEXELEMENT9 element01[] = {
+		{0,0,D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_POSITION,0},//顶点位置
+		{0,12,D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_NORMAL,0},//顶点法向量
+		D3DDECL_END()//结束元素
+	};
+	g_vsSample->VSShader(L"VertexShader.hlsl", element01);
+
+	//设置
+	D3DXVECTOR4 vMtrlAmbient(1.0f, 1.0f, 1.0f, 1.0f);//环境光率
+	D3DXVECTOR4 vMtrlDiffuse(1.0f, 1.0f, 1.0f, 1.0f);//漫反射率
+	g_vsSample->mVSConstTable->SetVector(m_d3dDevice, "mtrlAmbient", &vMtrlAmbient);
+	g_vsSample->mVSConstTable->SetVector(m_d3dDevice, "mtrlDiffuse", &vMtrlDiffuse);
+
+	//-------------------------------------------------------------------------------------
+	//创建声明顶点 【正方形】
 	D3DVERTEXELEMENT9 element[] = {
 		{0,0,D3DDECLTYPE_FLOAT3,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_POSITION,0},//顶点位置
 		{0,12,D3DDECLTYPE_FLOAT4,D3DDECLMETHOD_DEFAULT,D3DDECLUSAGE_COLOR,0},//漫反射颜色
@@ -39,7 +60,39 @@ void Shader::Init()
 
 
 	//--------------------------------------------------------------------------------------
+	//绘制贴图
 	g_pshader->PSShader(L"PS01_Shader.hlsl");
+}
+
+void Shader::SetMatrices()
+{
+	//旋转矩阵
+	D3DXMATRIX matWorld, matTs;
+	SetRotation(&matWorld, nullptr,&matTs);
+	matWorld = matWorld * matTs;
+	g_vsSample->mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
+	
+
+	//设置光照
+	//D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
+	D3DXVECTOR4 vLightDir(0.0f, 1.0f, 0.0f, 1.0f);
+	g_vsSample->mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
+
+	//取景变换矩阵
+	D3DXMATRIX matView;
+	D3DXVECTOR3 position(0.0f, 2.0f, -4.0f);//摄像机位置
+	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);//观察点位置
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);//向上的向量
+	D3DXMatrixLookAtLH(&matView, &position, &target, &up);
+
+	//投影变换矩阵
+	D3DXMATRIX matProj;
+	float aspect = (float)(mWidth / mHeight);
+	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
+
+	//组合变换
+	D3DXMATRIX matWorldViewProj = matWorld * matView * matProj;
+	g_vsSample->mVSConstTable->SetMatrix(m_d3dDevice, "matWorldViewProj", &matWorldViewProj);
 }
 
 void Shader::DrawVSShader()
@@ -87,9 +140,9 @@ void Shader::DrawVSShader()
 	};
 
 	//设置顶点着色器
-	m_d3dDevice->SetVertexShader(g_vshader->mVertexShader);
+	m_d3dDevice->SetVertexShader(g_vsSample->mVertexShader);
 	//设置顶点声明描述
-	m_d3dDevice->SetVertexDeclaration(g_vshader->pVertexDecl);
+	m_d3dDevice->SetVertexDeclaration(g_vsSample->pVertexDecl);
 
 	//使用像素着色器
 	//m_d3dDevice->SetPixelShader(mPixelShader);
@@ -109,47 +162,21 @@ void Shader::DrawVSShader()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, ARRAYSIZE(indexBuffer), ARRAYSIZE(indexBuffer) / 3, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(VSVertex));
 }
 
-void Shader::SetMatrices()
-{
-	//旋转矩阵
-	D3DXMATRIX matWorld;
-	SetRotation(&matWorld);
-	g_vshader->mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
-
-	//设置光照
-	//D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
-	D3DXVECTOR4 vLightDir(1.0f, 1.0f, -1.0f, 1.0f);
-	g_vshader->mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
-
-	//取景变换矩阵
-	D3DXMATRIX matView;
-	D3DXVECTOR3 position(0.0f, 2.0f, -4.0f);//摄像机位置
-	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);//观察点位置
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);//向上的向量
-	D3DXMatrixLookAtLH(&matView, &position, &target, &up);
-
-	//投影变换矩阵
-	D3DXMATRIX matProj;
-	float aspect = (float)(mWidth / mHeight);
-	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI * 0.5f, aspect, 1.0f, 1000.0f);
-
-	//组合变换
-	D3DXMATRIX matWorldViewProj = matWorld * matView * matProj;
-	g_vshader->mVSConstTable->SetMatrix(m_d3dDevice, "matWorldViewProj", &matWorldViewProj);
-}
-
 //绘制正方形 顶点着色器
 void Shader::DrawSquare()
 {
 	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);//背面消影
 
 	//旋转矩阵
-	D3DXMATRIX matWorld, matView, matProj;
-	SetRotation(&matWorld);
+	D3DXMATRIX matWorld, matView, matProj,matTs;
+	float matTran[4];
+	SetRotation(&matWorld,matTran, &matTs);
+	//matWorld = matWorld * matTs;//平移
 	if (GetAsyncKeyState('1')) {
 		D3DXMatrixIdentity(&matWorld);
 	}
 	g_vshader->mVSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
+	g_vshader->mVSConstTable->SetFloatArray(m_d3dDevice, "matTran", matTran, 4);
 
 	//取景变换矩阵
 	SetLookAtLH(&matView);
@@ -193,20 +220,26 @@ void Shader::DrawSquare()
 	m_d3dDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, ARRAYSIZE(indexBuffer), ARRAYSIZE(indexBuffer) / 3, indexBuffer, D3DFMT_INDEX16, vertex, sizeof(VS1Vertex));
 }
 
-
-
 void Shader::DrawPrimitiveUPUV1()
 {
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
 	//m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	//旋转矩阵
-	D3DXMATRIX matWorld;
-	SetRotation(&matWorld);
+	D3DXMATRIX matWorld, matTs;
+	//float4 数组
+	float matTran[4];
+
+	SetRotation(&matWorld,matTran,&matTs);
+	//matWorld = matWorld * matTs;//平移
 	if (GetAsyncKeyState('1')) {
 		D3DXMatrixIdentity(&matWorld);
 	}
 	g_pshader->mPSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
+	g_pshader->mPSConstTable->SetFloatArray(m_d3dDevice, "matTran", matTran,4);
+
+	//ColorMatrix cmat(matWorld,matTran);
+	//g_pshader->mPSConstTable->SetValue(m_d3dDevice, "ColorMatrix", &cmat,sizeof(cmat));
 
 	//0 1    //0 
 	//  2    //3 2
