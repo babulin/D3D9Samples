@@ -6,6 +6,7 @@ Shader::Shader(D3D9* d3d9):Texture(d3d9)
 	g_vshader = new VShader(d3d9);
 	g_vsSample = new VShader(d3d9);
 	g_pshader = new VShader(d3d9);
+	g_ps2hader = new VShader(d3d9);
 }
 
 Shader::~Shader()
@@ -22,6 +23,11 @@ Shader::~Shader()
 	if (g_pshader != nullptr)
 	{
 		delete g_pshader;
+	}	
+	
+	if (g_ps2hader != nullptr)
+	{
+		delete g_ps2hader;
 	}
 }
 
@@ -62,6 +68,10 @@ void Shader::Init()
 	//--------------------------------------------------------------------------------------
 	//绘制贴图
 	g_pshader->PSShader(L"PS01_Shader.hlsl");
+
+	//--------------------------------------------------------------------------------------
+	//绘制贴图2
+	g_ps2hader->PSShader(L"PS02_Shader.hlsl");
 }
 
 void Shader::SetMatrices()
@@ -273,35 +283,38 @@ void Shader::DrawIndexedPrimitiveUPUV2()
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
+	//旋转矩阵
+	D3DXMATRIX matWorld, matTs;
+	//float4 数组
+	float matTran[4];
+
+	SetRotation(&matWorld, matTran, &matTs);
+	//matWorld = matWorld * matTs;//平移
+	if (GetAsyncKeyState('1')) {
+		D3DXMatrixIdentity(&matWorld);
+	}
+	g_ps2hader->mPSConstTable->SetMatrix(m_d3dDevice, "matWorld", &matWorld);
+	g_ps2hader->mPSConstTable->SetFloatArray(m_d3dDevice, "matTran", matTran, 4);
+
 	//0 1    //0 
 	//  2    //3 2
 	float x = 0.8f, y = 0.8f;
-	float min = 0.0f, max = 1.0f;
+	float min = 0.0f, max = 1.0f, min1 = 0.0f, max1 = 1.0f;
 	UV2Vertex vertex[] = {
-		{-x , y, 1.0f, COLOR_RED	,min,min,min,min},
-		{ x , y, 1.0f, COLOR_WHITE	,max,min,max,min},
-		{ x	,-y, 1.0f, COLOR_WHITE	,max,max,max,max},
-		{-x	, y, 1.0f, COLOR_RED	,min,min,min,min},
-		{ x	,-y, 1.0f, COLOR_WHITE	,max,max,max,max},
-		{-x ,-y, 1.0f, COLOR_WHITE	,min,max,min,max},
+		{-x , y, 1.0f, COLOR_RED	,min,min,min1,min1},
+		{ x , y, 1.0f, COLOR_WHITE	,max,min,max1,min1},
+		{ x	,-y, 1.0f, COLOR_WHITE	,max,max,max1,max1},
+		{-x	, y, 1.0f, COLOR_RED	,min,min,min1,min1},
+		{ x	,-y, 1.0f, COLOR_WHITE	,max,max,max1,max1},
+		{-x ,-y, 1.0f, COLOR_WHITE	,min,max,min1,max1},
 	};
+
+	//使用像素着色器
+	m_d3dDevice->SetPixelShader(g_ps2hader->mPixelShader);
 
 	//使用纹理
 	m_d3dDevice->SetTexture(0, mTextureBG1);
-	m_d3dDevice->SetTexture(1, mTextureBG2);
-
-	//纹理融合
-	for (DWORD i = 0; i < 2; ++i)
-	{
-		// Color通道混合算法设置（纹理 * 当前）
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLORARG2, D3DTA_CURRENT);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_COLOROP, D3DTOP_MODULATE);
-		// Alpha通道混合算法设置（纹理 * 当前）
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-		m_d3dDevice->SetTextureStageState(i, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	}
+	m_d3dDevice->SetTexture(1, mTextureP1);
 
 	//顶点格式
 	m_d3dDevice->SetFVF(UV2Vertex::FVF);
@@ -318,7 +331,7 @@ void Shader::DrawIndexedPrimitiveUPUV2x2()
 
 	//0 1    //0 
 	//  2    //3 2
-	float x = 0.8f, y = 0.8f;
+	float x = 0.5f, y = 0.5f;
 	float min = 0.0f, max = 1.0f, min1 = 0.25f, max1 = 0.75f;
 	UV2Vertex vertex[] = {
 		{-x , y, 1.0f, COLOR_WHITE	,min,min,min1,min1},
@@ -328,15 +341,12 @@ void Shader::DrawIndexedPrimitiveUPUV2x2()
 		{ x	,-y, 1.0f, COLOR_WHITE	,max,max,max1,max1},
 		{-x ,-y, 1.0f, COLOR_WHITE	,min,max,min1,max1},
 	};
+	//不使用像素着色器
+	m_d3dDevice->SetPixelShader(nullptr);
 
 	//使用纹理
 	m_d3dDevice->SetTexture(0, mTextureBG1);
 	m_d3dDevice->SetTexture(1, mTexture2x2);
-
-	//使用顶点着色器
-
-	//使用像素着色器
-
 
 	//设置纹理采样
 	m_d3dDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);

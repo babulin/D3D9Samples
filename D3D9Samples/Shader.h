@@ -8,6 +8,7 @@ public:
 	VShader* g_vshader;
 	VShader* g_vsSample;
 	VShader* g_pshader;
+	VShader* g_ps2hader;
 public:
 	Shader(D3D9* d3d9);
 	~Shader();

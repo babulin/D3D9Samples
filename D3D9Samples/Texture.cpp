@@ -8,6 +8,17 @@ Texture::Texture(D3D9* d3d9)
 	 mTextureBG3 = nullptr;				//Œ∆¿Ì - ±≥æ∞3
 	 mTexture1x1 = nullptr;				//Œ∆¿Ì - 1x1
 	 mTexture2x2 = nullptr;				//Œ∆¿Ì - 2x2
+	 mTextureP1 = nullptr;				//Œ∆¿Ì - Õº1
+}
+
+Texture::~Texture()
+{
+	mTextureBG1->Release();
+	mTextureBG2->Release();
+	mTextureBG3->Release();
+	mTexture1x1->Release();
+	mTexture2x2->Release();
+	mTextureP1->Release();
 }
 
 void Texture::Init()
@@ -31,6 +42,11 @@ HRESULT Texture::CreateTexture()
 
 	//---------------------------------------------------------
 	if (D3DXCreateTextureFromFile(m_d3dDevice, L"bg2.bmp", &mTextureBG3) != D3D_OK) {
+		MessageBox(NULL, L"Œ∆¿Ìº”‘ÿ ß∞‹", L"–°Õ√ﬂ¥", MB_OK);
+	}
+
+	//---------------------------------------------------------
+	if (D3DXCreateTextureFromFile(m_d3dDevice, L"p1.jpg", &mTextureP1) != D3D_OK) {
 		MessageBox(NULL, L"Œ∆¿Ìº”‘ÿ ß∞‹", L"–°Õ√ﬂ¥", MB_OK);
 	}
 
