@@ -13,6 +13,8 @@
 enum class Samples {
 	VERTEX_BUFFER,//顶点缓存
 	VERTEX_INDICES_BUFFER,//顶点，索引缓存
+	TEXTURE,//纹理
+	SHADER,//着色器
 };
 
 //D3DFMT_A8R8G8B8	ARGB

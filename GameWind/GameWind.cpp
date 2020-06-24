@@ -10,13 +10,6 @@ GameWind* windCreate(HINSTANCE hInstance, int width, int hegiht, const wchar_t* 
 	return gWnd;
 }
 
-void safeDelete() {
-	if (gWnd != nullptr)
-	{
-		delete gWnd;
-	}
-}
-
 /*+---------------------------------------------------
  *| ´´½¨´°¿Ú
  *+---------------------------------------------------

@@ -10,7 +10,7 @@ Texture* g_texture;
 Shader* g_shader;
 
 //当前状态
-Samples g_Status = Samples::VERTEX_INDICES_BUFFER;
+Samples g_Status = Samples::SHADER;
 
 D3DApp::D3DApp(GameWind* GameWind)
 {
@@ -28,7 +28,6 @@ HRESULT D3DApp::Init()
 		MessageBox(pGameWind->mHwnd, TEXT("InitD3D初始化失败"), TEXT("错误提示"), MB_OK);
 	}
 
-
 	switch (g_Status)
 	{
 
@@ -41,19 +40,20 @@ HRESULT D3DApp::Init()
 		g_vBuff = new VertexBuffer(g_d3d9);
 		g_vBuff->CreateIndices();
 		break;
+	case Samples::TEXTURE:
+		//------------------------------------
+		//纹理贴图
+		g_texture = new Texture(g_d3d9);
+		g_texture->Init();
+		break;
+	case Samples::SHADER:
+		//------------------------------------
+		g_shader = new Shader(g_d3d9);
+		g_shader->Init();
+		break;
 	default:
 		break;
 	}
-
-
-	//------------------------------------
-	//纹理贴图
-	//g_texture = new Texture(g_d3d9);
-	//g_texture->Init();
-
-	//------------------------------------
-	//g_shader = new Shader(g_d3d9);
-	//g_shader->Init();
 
 	return S_OK;
 }
@@ -62,11 +62,6 @@ void D3DApp::Render()
 {
 	g_d3d9->BeginScene();
 
-
-
-	//绘制
-	//g_texture->DrawPrimitiveUPUV1();
-	//g_texture->DrawIndexedPrimitiveUPUV2();
 	switch (g_Status)
 	{
 	case Samples::VERTEX_BUFFER:
@@ -78,23 +73,22 @@ void D3DApp::Render()
 	case Samples::VERTEX_INDICES_BUFFER:
 		g_vBuff->DrawIndices();
 		break;
+	case Samples::TEXTURE:
+		//绘制
+		//g_texture->DrawPrimitiveUPUV1();
+		g_texture->DrawIndexedPrimitiveUPUV2x2();
+		break;
+	case Samples::SHADER:
+		//绘制 W S 操作
+		//g_shader->DrawVSShader();
+		//g_shader->DrawSquare();
+		//g_shader->DrawPrimitiveUPUV1();
+		//g_shader->DrawIndexedPrimitiveUPUV2();
+		g_shader->DrawIndexedPrimitiveUPUV2x2();
+		break;
 	default:
 		break;
 	}
-	//g_texture->DrawIndexedPrimitiveUPUV2x2();
-
-	//绘制
-	//g_shader->DrawVSShader();
-	//g_shader->DrawSquare();
-<<<<<<< .mine
-	//g_shader->DrawPrimitiveUPUV1();
-	//g_shader->DrawIndexedPrimitiveUPUV2();
-	//g_shader->DrawIndexedPrimitiveUPUV2x2();
-=======
-	//g_shader->DrawPrimitiveUPUV1();
-	g_shader->DrawIndexedPrimitiveUPUV2();
-	g_shader->DrawIndexedPrimitiveUPUV2x2();
->>>>>>> .theirs
 
 	g_d3d9->EndScene();
 }
