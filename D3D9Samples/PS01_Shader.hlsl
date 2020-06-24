@@ -24,6 +24,7 @@ PS_OUTPUT ps_main(PS_INPUT input)
 	//HDR高亮
 	float4 HDR = float4(2.0f, 2.0f, 2.0f, 2.0f);
 
+	//矩阵乘法
 	color = mul(color, matWorld);
 
 	//设置输出颜色

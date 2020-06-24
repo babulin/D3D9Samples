@@ -8,6 +8,10 @@ SandBox* g_sBox;
 VertexBuffer* g_vBuff;
 Texture* g_texture;
 Shader* g_shader;
+
+//µ±Ç°×´Ì¬
+Samples g_Status = Samples::VERTEX_INDICES_BUFFER;
+
 D3DApp::D3DApp(GameWind* GameWind)
 {
 	pGameWind = GameWind;
@@ -24,10 +28,23 @@ HRESULT D3DApp::Init()
 		MessageBox(pGameWind->mHwnd, TEXT("InitD3D³õÊ¼»¯Ê§°Ü"), TEXT("´íÎóÌáÊ¾"), MB_OK);
 	}
 
-	//------------------------------------
-	//¶¥µã»º³åÓëË÷Òý»º³å
-	//g_vBuff = new VertexBuffer(g_d3d9);
-	//g_vBuff->Init();
+
+	switch (g_Status)
+	{
+
+	case Samples::VERTEX_BUFFER:
+		//------------------------------------
+		//¶¥µã»º³åÓëË÷Òý»º³å
+		g_vBuff = new VertexBuffer(g_d3d9);
+		g_vBuff->CreateVertex();
+	case Samples::VERTEX_INDICES_BUFFER:
+		g_vBuff = new VertexBuffer(g_d3d9);
+		g_vBuff->CreateIndices();
+		break;
+	default:
+		break;
+	}
+
 
 	//------------------------------------
 	//ÎÆÀíÌùÍ¼
@@ -35,8 +52,8 @@ HRESULT D3DApp::Init()
 	//g_texture->Init();
 
 	//------------------------------------
-	g_shader = new Shader(g_d3d9);
-	g_shader->Init();
+	//g_shader = new Shader(g_d3d9);
+	//g_shader->Init();
 
 	return S_OK;
 }
@@ -45,20 +62,31 @@ void D3DApp::Render()
 {
 	g_d3d9->BeginScene();
 
-	//»æÖÆ
-	//g_vBuff->Draw();
-	//g_vBuff->DrawPrimitiveUP();
-	//g_vBuff->DrawIndexedPrimitiveUP();
+
 
 	//»æÖÆ
 	//g_texture->DrawPrimitiveUPUV1();
 	//g_texture->DrawIndexedPrimitiveUPUV2();
+	switch (g_Status)
+	{
+	case Samples::VERTEX_BUFFER:
+		//»æÖÆ
+		g_vBuff->DrawVertex();
+		//g_vBuff->DrawPrimitiveUP();
+		//g_vBuff->DrawIndexedPrimitiveUP();
+		break;
+	case Samples::VERTEX_INDICES_BUFFER:
+		g_vBuff->DrawIndices();
+		break;
+	default:
+		break;
+	}
 	//g_texture->DrawIndexedPrimitiveUPUV2x2();
 
 	//»æÖÆ
 	//g_shader->DrawVSShader();
 	//g_shader->DrawSquare();
-	g_shader->DrawPrimitiveUPUV1();
+	//g_shader->DrawPrimitiveUPUV1();
 	//g_shader->DrawIndexedPrimitiveUPUV2();
 	//g_shader->DrawIndexedPrimitiveUPUV2x2();
 

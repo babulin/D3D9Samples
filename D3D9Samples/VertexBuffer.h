@@ -12,7 +12,8 @@ public:
 	void Init();
 	HRESULT CreateVertex();
 	HRESULT CreateIndices();
-	void Draw();
+	void DrawVertex();
+	void DrawIndices();
 	void DrawPrimitiveUP();
 	void DrawIndexedPrimitiveUP();
 };

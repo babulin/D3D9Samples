@@ -9,6 +9,12 @@
 #pragma comment(lib,"d3dx9.lib")//d3d链接库
 #pragma comment(lib,"winmm.lib") //timeGetTime()
 
+//用于切换案例的枚举值
+enum class Samples {
+	VERTEX_BUFFER,//顶点缓存
+	VERTEX_INDICES_BUFFER,//顶点，索引缓存
+};
+
 //D3DFMT_A8R8G8B8	ARGB
 #define COLOR_RED D3DCOLOR_ARGB(255, 255, 0, 0)
 #define COLOR_GREEN D3DCOLOR_ARGB(255, 0, 255, 0)

@@ -20,10 +20,12 @@ HRESULT VertexBuffer::CreateVertex()
 	// 3  2
 	float x = 0.5f, y = 0.5f;
 	D3Vertex vertex[] = {
-		{ -x,  y, 1.0f, COLOR_RED},
-		{  x,  y, 1.0f, COLOR_GREEN},
-		{  x, -y, 1.0f, COLOR_BLUE},
-		{ -x, -y, 1.0f, COLOR_WHITE},
+		{ -x,  y, 1.0f, COLOR_RED},			//0
+		{  x,  y, 1.0f, COLOR_GREEN},		//1
+		{  x, -y, 1.0f, COLOR_BLUE},		//2
+		{ -x,  y, 1.0f, COLOR_RED},			//0
+		{  x, -y, 1.0f, COLOR_BLUE},		//2
+		{ -x, -y, 1.0f, COLOR_WHITE},		//3
 	};
 
 	if (FAILED(m_d3dDevice->CreateVertexBuffer(sizeof(vertex), 0, D3Vertex::FVF, D3DPOOL_DEFAULT, &m_d3dBuffer, NULL))) {
@@ -45,6 +47,31 @@ HRESULT VertexBuffer::CreateVertex()
 //创建索引缓存
 HRESULT VertexBuffer::CreateIndices()
 {
+	//创建顶点缓存
+	// 0  1
+	// 3  2
+	float x = 0.5f, y = 0.5f;
+	D3Vertex vertex[] = {
+		{ -x,  y, 1.0f, COLOR_RED},			//0
+		{  x,  y, 1.0f, COLOR_GREEN},		//1
+		{  x, -y, 1.0f, COLOR_BLUE},		//2
+		{ -x, -y, 1.0f, COLOR_WHITE},		//3
+	};
+
+	if (FAILED(m_d3dDevice->CreateVertexBuffer(sizeof(vertex), 0, D3Vertex::FVF, D3DPOOL_DEFAULT, &m_d3dBuffer, NULL))) {
+		return E_FAIL;
+	}
+
+	void* pvertexes = NULL;
+	if (FAILED(m_d3dBuffer->Lock(0, sizeof(vertex), (void**)&pvertexes, 0))) {
+		return E_FAIL;
+	}
+
+	memcpy(pvertexes, vertex, sizeof(vertex));
+
+	m_d3dBuffer->Unlock();
+
+
 	//创建索引缓存
 	short indexBuffer[6] = { 0,1,2,0,2,3 };
 	if (FAILED(m_d3dDevice->CreateIndexBuffer(sizeof(indexBuffer), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndex, NULL)))
@@ -64,8 +91,23 @@ HRESULT VertexBuffer::CreateIndices()
 	return S_OK;
 }
 
-//绘制
-void VertexBuffer::Draw()
+//使用顶点缓存绘制
+void VertexBuffer::DrawVertex()
+{
+	//关闭光照
+	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	m_d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	//绘制顶点缓存
+	m_d3dDevice->SetStreamSource(0, m_d3dBuffer, 0, sizeof(D3Vertex));
+	m_d3dDevice->SetFVF(D3Vertex::FVF);
+	//6个点
+
+	m_d3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+}
+
+//使用顶点缓存，索引缓存 绘制
+void VertexBuffer::DrawIndices()
 {
 	//关闭光照
 	m_d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
