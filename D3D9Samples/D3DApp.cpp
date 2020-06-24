@@ -80,11 +80,11 @@ void D3DApp::Render()
 		break;
 	case Samples::SHADER:
 		//»æÖÆ W S ²Ù×÷
-		//g_shader->DrawVSShader();
+		g_shader->DrawVSShader();
 		//g_shader->DrawSquare();
 		//g_shader->DrawPrimitiveUPUV1();
 		//g_shader->DrawIndexedPrimitiveUPUV2();
-		g_shader->DrawIndexedPrimitiveUPUV2x2();
+		//g_shader->DrawIndexedPrimitiveUPUV2x2();
 		break;
 	default:
 		break;

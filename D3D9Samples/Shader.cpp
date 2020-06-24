@@ -85,7 +85,7 @@ void Shader::SetMatrices()
 
 	//设置光照
 	//D3DXVECTOR4 vLightDir(cosf(timeGetTime() / 350.0f), 0.8f, sinf(timeGetTime() / 350.0f), 1.0f);
-	D3DXVECTOR4 vLightDir(0.0f, 1.0f, 0.0f, 1.0f);
+	D3DXVECTOR4 vLightDir(0.0f, 1.0f, 1.0f, 1.0f);
 	g_vsSample->mVSConstTable->SetVector(m_d3dDevice, "vecLightDir", &vLightDir);
 
 	//取景变换矩阵
