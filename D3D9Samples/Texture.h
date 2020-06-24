@@ -8,8 +8,10 @@ protected:
 	LPDIRECT3DTEXTURE9 mTextureBG3;				//Œ∆¿Ì - ±≥æ∞3
 	LPDIRECT3DTEXTURE9 mTexture1x1;				//Œ∆¿Ì - 1x1
 	LPDIRECT3DTEXTURE9 mTexture2x2;				//Œ∆¿Ì - 2x2
+	LPDIRECT3DTEXTURE9 mTextureP1;				//Œ∆¿Ì - Õº1
 public:
 	Texture(D3D9* d3d9);
+	~Texture();
 	virtual void Init();
 	HRESULT CreateTexture();
 	HRESULT CreateTexture1x1();

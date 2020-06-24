@@ -36,3 +36,4 @@ public:
 };
 
 AHLIN_API GameWind* windCreate(HINSTANCE hInstance, int width, int hegiht, const wchar_t* wndClassName = L"GameWind v1.0.0");
+AHLIN_API void safeDelete();

@@ -86,9 +86,15 @@ void D3DApp::Render()
 	//»æÖÆ
 	//g_shader->DrawVSShader();
 	//g_shader->DrawSquare();
+<<<<<<< .mine
 	//g_shader->DrawPrimitiveUPUV1();
 	//g_shader->DrawIndexedPrimitiveUPUV2();
 	//g_shader->DrawIndexedPrimitiveUPUV2x2();
+=======
+	//g_shader->DrawPrimitiveUPUV1();
+	g_shader->DrawIndexedPrimitiveUPUV2();
+	g_shader->DrawIndexedPrimitiveUPUV2x2();
+>>>>>>> .theirs
 
 	g_d3d9->EndScene();
 }

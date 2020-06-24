@@ -77,12 +77,6 @@ void VShader::VSShader(const wchar_t file[],D3DVERTEXELEMENT9 element[])
 		MessageBox(NULL, L"CreateVertexDeclaration - failed", 0, 0);
 		return;
 	}
-
-	//设置
-	//D3DXVECTOR4 vMtrlAmbient(1.0f, 1.0f, 1.0f, 1.0f);//环境光
-	//D3DXVECTOR4 vMtrlDiffuse(1.0f, 1.0f, 1.0f, 1.0f);//漫反射
-	//mVSConstTable->SetVector(m_d3dDevice, "mtrlAmbient", &vMtrlAmbient);
-	//mVSConstTable->SetVector(m_d3dDevice, "mtrlDiffuse", &vMtrlDiffuse);
 }
 
 void VShader::PSShader(const wchar_t file[])

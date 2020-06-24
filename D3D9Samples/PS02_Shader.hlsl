@@ -1,4 +1,5 @@
 sampler samp;//采样
+sampler samp1;//采样
 
 matrix matWorld;//变换矩阵
 float4 matTran;//平移矩阵
@@ -6,6 +7,7 @@ float4 matTran;//平移矩阵
 //输入纹理坐标(所有)
 struct PS_INPUT {
 	float2 t0 : TEXCOORD0;//输入纹理坐标UV
+	float2 t1 : TEXCOORD1;//输入纹理坐标UV
 	vector color : COLOR;//颜色
 };
 
@@ -28,7 +30,7 @@ struct PS_OUTPUT {
 //[R G B A]		| Br Bg Bb Ba  |
 //				| Ar Ag Ab Aa  |
 //				|_Or Og Ob Oa _|
-struct ColorMatrix{
+struct ColorMatrix {
 	row_major float4x4 mat;
 	float4 offset;
 };
@@ -50,8 +52,10 @@ PS_OUTPUT ps_main(PS_INPUT input)
 
 	//UV坐标-获取纹理采样颜色值
 	float4 color = tex2D(samp, input.t0);
+	float4 color1 = tex2D(samp1, input.t1);
 
 	//颜色矩阵计算
+	color = color * color1;
 	color = ColorTransform(color, mat);
 
 	//设置输出颜色

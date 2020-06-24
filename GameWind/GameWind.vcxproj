@@ -75,22 +75,26 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)bin\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)bin\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
